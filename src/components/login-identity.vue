@@ -8,7 +8,11 @@
 
 <script>
   export default {
-    props: ['identityList'],
+    data() {
+      return {
+        identityList: ['管理员', '教师', '学生'],
+      }
+    },
     methods: {
       change(item) {
         this.$emit("change", item);
@@ -24,5 +28,6 @@
     align-items: center;
     flex-wrap: wrap;
     width: 100%;
+    text-align: center;
   }
 </style>

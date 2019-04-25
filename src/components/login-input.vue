@@ -1,9 +1,9 @@
 <template>
   <div class="outer">
     <div class="input-main">
-      <input type="text" class="login-item">
-      <input type="text" class="login-item">
-      <button type="submit" class="submit">登陆</button>
+      <input type="text" class="login-item user-item" :placeholder="prompt">
+      <input type="text" class="login-item psd-item" placeholder="请输入登陆密码">
+      <button type="submit" class="login-item">登陆</button>
     </div>
     <img src="../assets/switch.png" class="switch" @click="change">
   </div>
@@ -11,10 +11,16 @@
 
 <script>
   export default {
+    props: ['identity'],
     methods: {
       change() {
         this.$emit("change");
-      }
+      },
+    },
+    computed: {
+      prompt() {
+        return `请输入${this.identity}的 ID`;
+      },
     }
   }
 </script>
@@ -29,20 +35,24 @@
     flex-wrap: wrap;
     width: 100%;
   }
-  .submit {
-    width: 90%;
-    height: 40px;
-    line-height: 40px;
-    border: 1px solid rgb(124, 114, 114);
-    border-radius: 50px;
-    text-align: center;
-    margin: 10px 0;
-    outline: none;
-    background-color: rgba(255, 255, 255, 0.7);
+  .user-item {
+    background: url('../assets/user.png') no-repeat 20px center;
+    padding-left: 60px;
+    box-sizing: border-box;
+  }
+  .psd-item {
+    background: url('../assets/psd.png') no-repeat 20px center;
+    padding-left: 60px;
+    box-sizing: border-box;
+  }
+  .login-item:focus {
+    box-shadow: 0 0 18px lightgreen; 
+    -webkit-box-shadow: 0 0 18px lightgreen;
+    transition: box-shadow linear .2s; 
+    -webkit-transition: box-shadow linear .2s; 
   }
   .switch {
     position: absolute;
     right: 10%;
-    font-size: 0.9rem;
   }
 </style>

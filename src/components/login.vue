@@ -2,13 +2,7 @@
   <div class="main">
     <div class="container">
       <img src="../assets/GZHU.png" class="logo">
-      <component :is="componentId" :identityList="identityList" @change="changeLogin"></component>
-      <!-- <login-identity :data="propsData" @changeLogin="changeLogin"></login-identity> -->
-      <!-- <img src="../assets/GZHU.png" class="logo">
-      <div v-for="(item, index) in identity" :key="index" class="login-item" v-show="!loginDetail" @click="login">
-        <p>{{ item }}</p>
-      </div> -->
-      <!-- <dangosky-input v-show="loginDetail" @changeIdentity="changeIdentity"></dangosky-input> -->
+      <component :is="componentId" :identity="identity" @change="changeLogin"></component>
     </div>
   </div>
 </template>
@@ -19,8 +13,8 @@
   export default {
     data() {
       return {
-        identityList: ['管理员', '教师', '学生'],
-        componentId: loginIdentity
+        componentId: loginIdentity,
+        identity: ""
       }
     }, 
     components: {
@@ -28,13 +22,13 @@
       'login-identity': loginIdentity
     },
     methods: {
-      changeLogin(...name) {
-        if(name.length === 0) {
+      changeLogin(key) {
+        if(arguments.length === 0) {
           this.componentId = loginIdentity;
+          return;
         }
-        else {
-          this.componentId = loginInput;
-        }
+        this.componentId = loginInput;
+        this.identity = key;
       },
     },
     computed: {
@@ -58,7 +52,6 @@
     line-height: 40px;
     border: 1px solid #fff;
     border-radius: 50px;
-    text-align: center;
     margin: 10px 0;
     background-color: rgba(255, 255, 255, 0.7);
     outline: none;
@@ -83,7 +76,7 @@
   }
   .logo {
     position: relative;
-    top: -50px;
+    top: -30px;
     transform: scale(0.7, 0.7);
     margin-bottom: -50px;
   }
