@@ -17,6 +17,6 @@
     padding: 0;
   }
   #app {
-    font-family: "KaiTi", "Avenir", Helvetica, Arial, sans-serif;
+    font-family: "Avenir", Helvetica, Arial, sans-serif;
   }
 </style>
