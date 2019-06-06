@@ -55,6 +55,7 @@
     margin: 10px 0;
     background-color: rgba(255, 255, 255, 0.7);
     outline: none;
+    cursor: pointer;
   }
   .main {
     background: #fff url('../assets/bg.png') 50% 50% no-repeat;

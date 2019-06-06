@@ -43,11 +43,13 @@
     background: url('../assets/user.png') no-repeat 20px center;
     padding-left: 60px;
     box-sizing: border-box;
+    cursor: text !important;
   }
   .psd-item {
     background: url('../assets/psd.png') no-repeat 20px center;
     padding-left: 60px;
     box-sizing: border-box;
+    cursor: text !important;
   }
   .login-item:focus {
     box-shadow: 0 0 18px lightgreen; 

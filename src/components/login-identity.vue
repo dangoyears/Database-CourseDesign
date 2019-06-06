@@ -30,7 +30,4 @@
     width: 100%;
     text-align: center;
   }
-  .login-item {
-    cursor: pointer;
-  }
 </style>
