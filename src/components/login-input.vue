@@ -3,7 +3,7 @@
     <div class="input-main">
       <input type="text" class="login-item user-item" :placeholder="prompt">
       <input type="text" class="login-item psd-item" placeholder="请输入登陆密码">
-      <button type="submit" class="login-item">登陆</button>
+      <button type="submit" class="login-item" @click="signIn">登陆</button>
     </div>
     <img src="../assets/switch.png" class="switch" @click="change">
   </div>
@@ -16,6 +16,10 @@
       change() {
         this.$emit("change");
       },
+      signIn() {
+        // 待补充账号密码的相关判断，合理性和正确与否
+        this.$router.push({name: 'manager'});
+      }
     },
     computed: {
       prompt() {
@@ -54,5 +58,6 @@
   .switch {
     position: absolute;
     right: 10%;
+    cursor: pointer;
   }
 </style>
