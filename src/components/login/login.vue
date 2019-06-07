@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="container">
-      <img src="../assets/GZHU.png" class="logo">
+      <img src="../..//assets/GZHU.png" class="logo">
       <component :is="componentId" :identity="identity" @change="changeLogin"></component>
     </div>
   </div>
@@ -58,7 +58,7 @@
     cursor: pointer;
   }
   .main {
-    background: #fff url('../assets/bg.png') 50% 50% no-repeat;
+    background: #fff url('../../assets/bg.png') 50% 50% no-repeat;
     background-size: cover;
     width: 100vw;
     height: 100vh;

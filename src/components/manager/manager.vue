@@ -9,7 +9,7 @@
           <span class="user">用户名，待获取</span>
         </el-menu-item>
         <el-menu-item class="user-tab" @click="switchUser">
-          <img src="../assets/switch1.png" alt="切换账号">
+          <img src="../../assets/switch1.png" alt="切换账号">
         </el-menu-item>
       </el-menu>
       <div class="user-tab">
@@ -41,7 +41,7 @@
         this.componentId = `manager-${key}`;
       },
       switchUser() {
-        this.$confirm('是否确定要切换账号？', '提示', {
+        this.$confirm('是否确定要切换账号？', '提醒', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -63,7 +63,7 @@
     top: 0;
   }
   .user {
-    background: url('../assets/user1.png') no-repeat;
+    background: url('../../assets/user1.png') no-repeat;
     display: inline-block;
     height: 0x;
     line-height: 30px;

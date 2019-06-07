@@ -1,24 +1,43 @@
 <template>
   <div class="outer">
     <div class="input-main">
-      <input type="text" class="login-item user-item" :placeholder="prompt">
-      <input type="text" class="login-item psd-item" placeholder="请输入登陆密码">
+      <input type="text" class="login-item user-item" :placeholder="prompt" ref="userItem" @blur="testData">
+      <input type="password" class="login-item psd-item" placeholder="请输入登陆密码" ref="psdItem">
       <button type="submit" class="login-item" @click="signIn">登陆</button>
     </div>
-    <img src="../assets/switch.png" class="switch" @click="change">
+    <img src="../../assets/switch.png" class="switch" @click="change">
   </div>
 </template>
 
 <script>
+  import api from '../../api/index'
   export default {
     props: ['identity'],
     methods: {
       change() {
         this.$emit("change");
       },
+      testData(e) {
+        e = e || window.event;
+        let ele = e.target.value || e.srcElement.value;
+        // console.log(ele);
+        
+      },
       signIn() {
-        // 待补充账号密码的相关判断，合理性和正确与否
-        this.$router.push({name: 'manager'});
+        let userData = this.$refs.userItem.value;
+        let psdData = this.$refs.psdItem.value;
+        let obj = {
+          "user": userData,
+          "pass": psdData
+        }
+        api.checkUser((data) => {
+          if(data) {
+            // this.$router.push({name: 'manager'});
+          }
+          else {
+            alert("账号或密码错误，请重新输入。");
+          }
+        }, obj);
       }
     },
     computed: {
@@ -40,13 +59,13 @@
     width: 100%;
   }
   .user-item {
-    background: url('../assets/user.png') no-repeat 20px center;
+    background: url('../../assets/user.png') no-repeat 20px center;
     padding-left: 60px;
     box-sizing: border-box;
     cursor: text !important;
   }
   .psd-item {
-    background: url('../assets/psd.png') no-repeat 20px center;
+    background: url('../../assets/psd.png') no-repeat 20px center;
     padding-left: 60px;
     box-sizing: border-box;
     cursor: text !important;

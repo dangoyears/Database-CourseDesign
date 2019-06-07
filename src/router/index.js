@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
-import login from '../components/login.vue'
-import manager from '../components/manager.vue'
+import login from '../components/login/login.vue'
+import manager from '../components/manager/manager.vue'
 
 export default new Router({
   routes: [
