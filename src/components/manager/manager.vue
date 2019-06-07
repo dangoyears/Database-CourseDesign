@@ -1,21 +1,19 @@
 <template>
   <div>
-    <header>
+    <header class="manager-header">
       <el-menu mode="horizontal" @select="handleSelect">
         <el-menu-item index="colleges">学院信息</el-menu-item>
         <el-menu-item index="teachers">教师信息</el-menu-item>
         <el-menu-item index="students">学生信息</el-menu-item>
         <el-menu-item class="user-tab">
-          <span class="user">用户名，待获取</span>
+          <span class="user">Hello, {{$route.params.userName}}</span>
         </el-menu-item>
         <el-menu-item class="user-tab" @click="switchUser">
           <img src="../../assets/switch1.png" alt="切换账号">
         </el-menu-item>
       </el-menu>
-      <div class="user-tab">
-      </div>
     </header>
-    <component :is="componentId"></component>
+    <component :is="componentId" style="margin-top: 60px;"></component>
   </div>
 </template>
 
@@ -57,6 +55,12 @@
 </script>
 
 <style scoped>
+  .manager-header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 2;
+  }
   .user-tab {
     position: absolute;
     right: 0;

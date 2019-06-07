@@ -1,8 +1,10 @@
 <template>
   <div class="outer">
     <div class="input-main">
-      <input type="text" class="login-item user-item" :placeholder="prompt" ref="userItem" @blur="testData">
-      <input type="password" class="login-item psd-item" placeholder="请输入登陆密码" ref="psdItem">
+      <input type="text" class="login-item user-item" :placeholder="prompt" ref="userItem" @input="testData">
+      <p class="wrong-prompt">{{userPrompt}}</p>
+      <input type="password" class="login-item psd-item" placeholder="请输入登陆密码" ref="psdItem" @focus="psdPrompt=''">
+      <p class="wrong-prompt">{{psdPrompt}}</p>
       <button type="submit" class="login-item" @click="signIn">登陆</button>
     </div>
     <img src="../../assets/switch.png" class="switch" @click="change">
@@ -13,36 +15,61 @@
   import api from '../../api/index'
   export default {
     props: ['identity'],
+    data() {
+      return {
+        psdPrompt: "",
+        userPrompt: ""
+      }
+    },
     methods: {
+      // 切换账号
       change() {
         this.$emit("change");
       },
+      // 检验输入是否合法
       testData(e) {
         e = e || window.event;
-        let ele = e.target.value || e.srcElement.value;
-        // console.log(ele);
-        
+        let str = (e.target.value || e.srcElement.value) + "";
+        if(str.length > 10) {
+          this.userPrompt = "用户ID不能超过十个字符"
+        }
+        else if(this.identity !== '管理员' && !(/^[0-9]*$/.test(str))) {
+          this.userPrompt = "用户ID只能包含数字";
+        }
+        else {
+          this.userPrompt = "";
+        }
       },
       signIn() {
         let userData = this.$refs.userItem.value;
         let psdData = this.$refs.psdItem.value;
+        if(userData === "") {
+          this.userPrompt = "用户ID不能为空";
+          return;
+        }
         let obj = {
           "user": userData,
           "pass": psdData
         }
         api.checkUser((data) => {
           if(data) {
-            // this.$router.push({name: 'manager'});
+            this.psdPrompt = "";
+            this.$router.push({
+              name: 'manager',
+              params: {
+                userName: userData
+              }
+            });
           }
           else {
-            alert("账号或密码错误，请重新输入。");
+            this.psdPrompt = "账号或密码错误，请重新输入";
           }
         }, obj);
       }
     },
     computed: {
       prompt() {
-        return `请输入${this.identity}的 ID`;
+        return `请输入${this.identity}的ID`;
       },
     }
   }
@@ -80,5 +107,12 @@
     position: absolute;
     right: 10%;
     cursor: pointer;
+  }
+  .wrong-prompt {
+    color: rgb(212, 45, 45);
+    font-size: 0.8rem;
+    position: relative;
+    left: -40%;
+    transform: translateX(50%);
   }
 </style>
