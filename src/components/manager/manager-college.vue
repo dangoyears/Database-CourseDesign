@@ -15,7 +15,7 @@
         </el-submenu>
       </el-menu>
       <el-menu>
-        <el-menu-item class="manager-add" @click="dialogFormVisible=true"><i class="el-icon-circle-plus-outline"></i></el-menu-item>
+        <el-menu-item class="manager-add" @click="dialogVisible=true"><i class="el-icon-circle-plus-outline"></i></el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -31,24 +31,28 @@
       </el-main>
     </el-container>
 
-    <el-dialog title="新建学院信息" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog title="新建学院信息" :visible.sync="dialogVisible" width="30%">
       <el-form :model="form">
         <el-form-item label="学院" label-width="40px">
-          <el-input v-model="form.college" autocomplete="off"></el-input>
+          <el-input v-model="form.college" autocomplete="off" @input="testFormLength(0, 'college')"></el-input>
+          <p class="dialog-prompt">{{prompt.college}}</p>
         </el-form-item>
         <el-form-item label="专业" label-width="40px">
-          <el-input v-model="form.specialty" autocomplete="off"></el-input>
+          <el-input v-model="form.specialty" autocomplete="off" @input="testFormLength(1, 'specialty')"></el-input>
+          <p class="dialog-prompt">{{prompt.specialty}}</p>
         </el-form-item>
         <el-form-item label="年级" label-width="40px">
-          <el-input v-model="form.grade" autocomplete="off"></el-input>
+          <el-input v-model="form.grade" autocomplete="off" @input="testFormLength(2, 'grade')"></el-input>
+          <p class="dialog-prompt">{{prompt.grade}}</p>
         </el-form-item>
         <el-form-item label="班级" label-width="40px">
-          <el-input v-model="form.class" autocomplete="off"></el-input>
+          <el-input v-model="form.class" autocomplete="off" @input="testFormLength(3, 'class')"></el-input>
+          <p class="dialog-prompt">{{prompt.class}}</p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible=false">取消</el-button>
-        <el-button type="primary" @click="dialogFormVisible=false">确定</el-button>
+        <el-button @click="dialogVisible=false">取消</el-button>
+        <el-button type="primary" @click="dialogVisible=false">确定</el-button>
       </div>
     </el-dialog>
   </el-container>
@@ -64,8 +68,14 @@
       };
       return {
         tableData: Array(20).fill(item),
-        dialogTableVisible: true,
-        dialogFormVisible: true,
+        dialogVisible: true,
+        // 输入框的提示信息
+        prompt: {
+          college: '',
+          specialty: '',
+          grade: '',
+          class: ''
+        },
         form: {
           college: '',
           specialty: '',
@@ -75,10 +85,13 @@
       }
     },
     methods: {
-
+      testFormLength(index, val) {
+        console.log(val);
+        this.prompt[index] = this.testLength(this.form, 20) ? "" : "输入的字数不能超过20";
+      }
     },
     computed: {
-    
+
     }
   }
 </script>
@@ -93,5 +106,11 @@
   }
   .manager-add {
     text-align: center;
+  }
+  .dialog-prompt {
+    color: rgb(204, 10, 10);
+    font-size: 0.8rem;
+    margin-bottom: -25px;
+
   }
 </style>
