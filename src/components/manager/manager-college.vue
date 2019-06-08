@@ -15,15 +15,15 @@
         </el-submenu>
       </el-menu>
       <el-menu>
-        <el-menu-item class="manager-add" @click="dialogVisible=true"><i class="el-icon-circle-plus-outline"></i></el-menu-item>
+        <el-menu-item class="manager-add" @click="openCollegeInfo"><i class="el-icon-circle-plus-outline"></i></el-menu-item>
       </el-menu>
     </el-aside>
 
     <el-container>
       <el-main>
-        <el-table :data="tableData">
-          <el-table-column prop="date" label="学院" width=""></el-table-column>
-          <el-table-column prop="name" label="专业" width=""></el-table-column>
+        <el-table :data="collegeInfos">
+          <el-table-column prop="college" label="学院" width=""></el-table-column>
+          <el-table-column prop="specialty" label="专业" width=""></el-table-column>
           <el-table-column prop="grade" label="年级"></el-table-column>
           <el-table-column prop="class" label="班级"></el-table-column>
           <el-table-column prop="sum" label="人数"></el-table-column>
@@ -51,23 +51,24 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible=false">取消</el-button>
-        <el-button type="primary" @click="dialogVisible=false">确定</el-button>
+        <el-button @click="this.dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitCollegeInfo">确定</el-button>
       </div>
     </el-dialog>
   </el-container>
 </template>
 
 <script>
+  import api from '../../api/index'
   export default {
+    created() {
+      api.getCollegeInfo((response) => {
+        this.collegeInfos = response.slice(0);
+      });
+    },
     data() {
-      const item = {
-        date: '2016-05-02',
-        name: 'lxy',
-        address: 'xxxxxx'
-      };
       return {
-        tableData: Array(20).fill(item),
+        collegeInfos: [],
         dialogVisible: false,
         // 输入框的提示信息
         prompt: {
@@ -86,24 +87,57 @@
       }
     },
     methods: {
-      testFormInfo(val) {
+      // 打开弹出框并初始化表单信息
+      openCollegeInfo() {
+        for(let key in this.prompt) {
+          this.prompt[key] = "";
+          this.form[key] = "";
+        }
+        this.dialogVisible = true;
+      },
+      // 校验表单信息是否符合规则
+      testFormInfo() {
         for(let key in this.form) {
           if(!this.testLength(this.form[key], 20)) {
             this.prompt[key] = "输入的字数不能超过20个";
+            return false;
           }
           else if((key === "college" || key === "specialty") && !this.testChar(this.form[key], "chinese")) {
             let temp = (key === "college") ? "学院名称" : "专业名称"; 
             this.prompt[key] = `${temp}只能包含中文`;
+            return false;
           }
           else if((key === "grade" || key === "class") && !this.testChar(this.form[key], "number")) {
             let temp = (key === "grade") ? "年级" : "班级"; 
             this.prompt[key] = `${temp}只能包含数字`;
+            return false;
           }
           else {
             this.prompt[key] = "";
           }
         }
-      }
+        return true;
+      },
+      // 提交表单信息
+      submitCollegeInfo() {
+        let mark = false;
+        for(let key in this.form) {
+          if(this.form[key].length === 0) {
+            this.prompt[key] = `输入信息不能为空`;
+            mark = true;
+          }
+        }
+        if(mark)  return;
+        if(!this.testFormInfo())  return;
+        api.uploadCollegeInfo(this.form);
+        this.dialogVisible = false;
+        this.$message({
+          message: '信息创建成功',
+          type: 'success',
+          duration: 1000,
+          showClose: true
+        });
+      },
     },
     computed: {
 

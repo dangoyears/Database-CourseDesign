@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="manager-header">
-      <el-menu mode="horizontal" @select="handleSelect">
+      <el-menu mode="horizontal" @select="handleSelect" >
         <el-menu-item index="colleges">学院信息</el-menu-item>
         <el-menu-item index="teachers">教师信息</el-menu-item>
         <el-menu-item index="students">学生信息</el-menu-item>

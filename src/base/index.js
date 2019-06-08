@@ -23,8 +23,7 @@ exports.install = function(Vue) {
       "english": /^[A-Za-z]*$/,
       "chinese": /^[一-龥]{0,}$/
     }
-    let ans = regObj[type].test(str);
-    if(!ans)  return false;
+    if(!regObj[type].test(str))  return false;
     return true;
   }
 }
