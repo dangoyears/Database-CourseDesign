@@ -2,11 +2,15 @@
   <el-container class="outer-container">
     <el-aside width="200px">
       <el-menu>
-        <el-submenu index="1" v-for="(item, college) in formatCollegeInfos" :key="college">
-          <template slot="title">{{college}}</template>
-          <el-submenu index="1-1" v-for="(item1, specialty) in item" :key="specialty">
-            <template slot="title">{{specialty}}</template>
-            <el-menu-item index="1-1-1" v-for="(val, index) in item1" :key="index">{{val}}</el-menu-item>
+        <el-submenu :index="collegeName" v-for="(item, collegeName) in formatCollegeInfos" :key="collegeName">
+          <template slot="title">
+            <p class="labelStyle" :title="collegeName">{{collegeName}}</p>
+          </template>
+          <el-submenu :index="specialtyName" v-for="(item1, specialtyName) in item" :key="specialtyName">
+            <template slot="title">
+              <p class="labelStyle" :title="specialtyName">{{specialtyName}}</p>
+            </template>
+            <el-menu-item :index="val" v-for="val in item1" :key="val">{{val}}</el-menu-item>
           </el-submenu>
         </el-submenu>
       </el-menu>
@@ -18,8 +22,8 @@
     <el-container>
       <el-main>
         <el-table :data="collegeInfos">
-          <el-table-column prop="college" label="学院" width=""></el-table-column>
-          <el-table-column prop="specialty" label="专业" width=""></el-table-column>
+          <el-table-column prop="college" label="学院"></el-table-column>
+          <el-table-column prop="specialty" label="专业"></el-table-column>
           <el-table-column prop="grade" label="年级"></el-table-column>
           <el-table-column prop="class" label="班级"></el-table-column>
           <el-table-column prop="sum" label="人数"></el-table-column>
@@ -58,7 +62,6 @@
   import api from '../../api/index'
   export default {
     created() {
-      console.log("created");
       api.getCollegeInfo((response) => {
         this.collegeInfos = response.slice(0);
         this.formatingCollegeInfo();
@@ -138,17 +141,23 @@
           showClose: true
         });
       },
+      // 格式化后端返回的数据，用于左侧边栏显示
+      /* 
+        {
+          college: {
+            specialty: {
+              class: []
+            }
+          }
+        }
+      */
       formatingCollegeInfo() {
-        // let specialtyArr = [];
-        // let classArr = [];
         this.collegeInfos.forEach((val) => {
           if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
-          console.log(this.formatCollegeInfos[val.college]);
-          if(!this.formatCollegeInfos[val.college][val.specialty]) this.formatCollegeInfos[val.college][val.specialty] = [];
-          console.log(this.formatCollegeInfos[val.college][val.specialty]);
-          this.formatCollegeInfos[val.college][val.specialty].push(val.grade + val.class + "");
+          let college = this.formatCollegeInfos[val.college];
+          if(!college[val.specialty]) college[val.specialty] = [];
+          college[val.specialty].push(val.grade + val.class + "");
         })
-        console.log(this.formatCollegeInfos);
       }
     },
     computed: {
@@ -172,6 +181,11 @@
     color: rgb(204, 10, 10);
     font-size: 0.8rem;
     margin-bottom: -25px;
-
+  }
+  .labelStyle {
+    margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>
