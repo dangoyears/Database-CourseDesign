@@ -27,6 +27,13 @@
           <el-table-column prop="grade" label="年级"></el-table-column>
           <el-table-column prop="class" label="班级"></el-table-column>
           <el-table-column prop="sum" label="人数"></el-table-column>
+          <el-table-column>
+            <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="deleteCollegeInfo(scope.row)">
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-main>
     </el-container>
@@ -157,6 +164,20 @@
           let college = this.formatCollegeInfos[val.college];
           if(!college[val.specialty]) college[val.specialty] = [];
           college[val.specialty].push(val.grade + val.class + "");
+        })
+      },
+      // 删除学院数据
+      deleteCollegeInfo(info) {
+        console.log(info);
+        this.$confirm('是否确定要删除该条数据', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          });
         })
       }
     },

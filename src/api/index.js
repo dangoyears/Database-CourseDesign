@@ -21,7 +21,7 @@ export default {
   },
   // 获取学院信息
   getCollegeInfo(callback) {
-    axios.get('https://dbcd.qfstudio.net//read/college')
+    axios.get('https://dbcd.qfstudio.net/read/college')
     .then(function(response) {
       callback(response.data.data);
     })
@@ -29,4 +29,13 @@ export default {
       alert(error);
     })
   },
+  // 删除学院信息
+  deleteCollegeInfo(obj) {
+    axios.get('https://dbcd.qfstudio.net/delete/class', {
+      params: obj
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  }
 }
