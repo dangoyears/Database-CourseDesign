@@ -30,10 +30,13 @@
       testData(e) {
         e = e || window.event;
         let str = (e.target.value || e.srcElement.value) + "";
-        if(str.length > 10) {
-          this.userPrompt = "用户ID不能超过十个字符"
+        if(!this.testLength(str, 10)) {
+          this.userPrompt = "用户ID不能超过十个字符";
         }
-        else if(this.identity !== '管理员' && !(/^[0-9]*$/.test(str))) {
+        else if(this.identity === '管理员' && !this.testChar(str, "english")) {
+          this.userPrompt = "管理员ID只能包含英文字母";
+        }
+        else if(this.identity !== '管理员' && !this.testChar(str, "number")) {
           this.userPrompt = "用户ID只能包含数字";
         }
         else {

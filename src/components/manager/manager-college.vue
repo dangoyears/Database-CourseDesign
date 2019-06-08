@@ -34,19 +34,19 @@
     <el-dialog title="新建学院信息" :visible.sync="dialogVisible" width="30%">
       <el-form :model="form">
         <el-form-item label="学院" label-width="40px">
-          <el-input v-model="form.college" autocomplete="off" @input="testFormLength(0, 'college')"></el-input>
+          <el-input v-model="form.college" autocomplete="off" @input="testFormInfo"></el-input>
           <p class="dialog-prompt">{{prompt.college}}</p>
         </el-form-item>
         <el-form-item label="专业" label-width="40px">
-          <el-input v-model="form.specialty" autocomplete="off" @input="testFormLength(1, 'specialty')"></el-input>
+          <el-input v-model="form.specialty" autocomplete="off" @input="testFormInfo"></el-input>
           <p class="dialog-prompt">{{prompt.specialty}}</p>
         </el-form-item>
         <el-form-item label="年级" label-width="40px">
-          <el-input v-model="form.grade" autocomplete="off" @input="testFormLength(2, 'grade')"></el-input>
+          <el-input v-model="form.grade" autocomplete="off" @input="testFormInfo"></el-input>
           <p class="dialog-prompt">{{prompt.grade}}</p>
         </el-form-item>
         <el-form-item label="班级" label-width="40px">
-          <el-input v-model="form.class" autocomplete="off" @input="testFormLength(3, 'class')"></el-input>
+          <el-input v-model="form.class" autocomplete="off" @input="testFormInfo"></el-input>
           <p class="dialog-prompt">{{prompt.class}}</p>
         </el-form-item>
       </el-form>
@@ -68,7 +68,7 @@
       };
       return {
         tableData: Array(20).fill(item),
-        dialogVisible: true,
+        dialogVisible: false,
         // 输入框的提示信息
         prompt: {
           college: '',
@@ -76,6 +76,7 @@
           grade: '',
           class: ''
         },
+        // 弹出框的表单信息
         form: {
           college: '',
           specialty: '',
@@ -85,9 +86,23 @@
       }
     },
     methods: {
-      testFormLength(index, val) {
-        console.log(val);
-        this.prompt[index] = this.testLength(this.form, 20) ? "" : "输入的字数不能超过20";
+      testFormInfo(val) {
+        for(let key in this.form) {
+          if(!this.testLength(this.form[key], 20)) {
+            this.prompt[key] = "输入的字数不能超过20个";
+          }
+          else if((key === "college" || key === "specialty") && !this.testChar(this.form[key], "chinese")) {
+            let temp = (key === "college") ? "学院名称" : "专业名称"; 
+            this.prompt[key] = `${temp}只能包含中文`;
+          }
+          else if((key === "grade" || key === "class") && !this.testChar(this.form[key], "number")) {
+            let temp = (key === "grade") ? "年级" : "班级"; 
+            this.prompt[key] = `${temp}只能包含数字`;
+          }
+          else {
+            this.prompt[key] = "";
+          }
+        }
       }
     },
     computed: {

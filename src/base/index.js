@@ -1,4 +1,4 @@
-exports.install = function(Vue, options) {
+exports.install = function(Vue) {
   // 节流
   Vue.prototype.throttle = function(fn, wait) {
     let last = 0;
@@ -16,7 +16,15 @@ exports.install = function(Vue, options) {
     if(str.length > limit)  return false;
     return true;
   }
-  // Vue.prototype.testChar = function(str, arr) {
-
-  // }
+  // 检验输入字符串的类型
+  Vue.prototype.testChar = function(str, type) {
+    let regObj = {
+      "number": /^[0-9]*$/,
+      "english": /^[A-Za-z]*$/,
+      "chinese": /^[一-龥]{0,}$/
+    }
+    let ans = regObj[type].test(str);
+    if(!ans)  return false;
+    return true;
+  }
 }
