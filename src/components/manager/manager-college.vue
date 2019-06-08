@@ -2,15 +2,11 @@
   <el-container class="outer-container">
     <el-aside width="200px">
       <el-menu>
-        <el-submenu index="1">
-          <template slot="title">导航一</template>
-          <el-menu-item-group>
-            <el-menu-item index="1-1">选项1</el-menu-item>
-            <el-menu-item index="1-2">选项2</el-menu-item>
-          </el-menu-item-group>
-          <el-submenu index="1-4">
-            <template slot="title">选项4</template>
-            <el-menu-item index="1-4-1">选项4-1</el-menu-item>
+        <el-submenu index="1" v-for="(item, college) in formatCollegeInfos" :key="college">
+          <template slot="title">{{college}}</template>
+          <el-submenu index="1-1" v-for="(item1, specialty) in item" :key="specialty">
+            <template slot="title">{{specialty}}</template>
+            <el-menu-item index="1-1-1" v-for="(val, index) in item1" :key="index">{{val}}</el-menu-item>
           </el-submenu>
         </el-submenu>
       </el-menu>
@@ -62,13 +58,17 @@
   import api from '../../api/index'
   export default {
     created() {
+      console.log("created");
       api.getCollegeInfo((response) => {
         this.collegeInfos = response.slice(0);
+        this.formatingCollegeInfo();
       });
     },
     data() {
       return {
+        obj: {a: 1, b: 2},
         collegeInfos: [],
+        formatCollegeInfos: {},
         dialogVisible: false,
         // 输入框的提示信息
         prompt: {
@@ -138,6 +138,18 @@
           showClose: true
         });
       },
+      formatingCollegeInfo() {
+        // let specialtyArr = [];
+        // let classArr = [];
+        this.collegeInfos.forEach((val) => {
+          if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
+          console.log(this.formatCollegeInfos[val.college]);
+          if(!this.formatCollegeInfos[val.college][val.specialty]) this.formatCollegeInfos[val.college][val.specialty] = [];
+          console.log(this.formatCollegeInfos[val.college][val.specialty]);
+          this.formatCollegeInfos[val.college][val.specialty].push(val.grade + val.class + "");
+        })
+        console.log(this.formatCollegeInfos);
+      }
     },
     computed: {
 

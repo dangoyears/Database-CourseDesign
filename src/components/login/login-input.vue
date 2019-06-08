@@ -1,9 +1,9 @@
 <template>
   <div class="outer">
     <div class="input-main">
-      <input type="text" class="login-item user-item" :placeholder="prompt" ref="userItem" @input="testData">
+      <input type="text" class="login-item user-item" :placeholder="prompt" v-model="form.user" @input="testData">
       <p class="wrong-prompt">{{userPrompt}}</p>
-      <input type="password" class="login-item psd-item" placeholder="请输入登陆密码" ref="psdItem" @focus="psdPrompt=''">
+      <input type="password" class="login-item psd-item" placeholder="请输入登陆密码"  v-model="form.psd" @focus="psdPrompt=''">
       <p class="wrong-prompt">{{psdPrompt}}</p>
       <button type="submit" class="login-item" @click="signIn">登陆</button>
     </div>
@@ -18,7 +18,11 @@
     data() {
       return {
         psdPrompt: "",
-        userPrompt: ""
+        userPrompt: "",
+        form: {
+          user: "",
+          psd: "",
+        }
       }
     },
     methods: {
@@ -27,32 +31,42 @@
         this.$emit("change");
       },
       // 检验输入是否合法
-      testData(e) {
-        e = e || window.event;
-        let str = (e.target.value || e.srcElement.value) + "";
-        if(!this.testLength(str, 10)) {
+      testData() {
+        if(!this.testLength(this.form.user, 10)) {
           this.userPrompt = "用户ID不能超过十个字符";
+          return false;
         }
-        else if(this.identity === '管理员' && !this.testChar(str, "english")) {
+        else if(this.identity === '管理员' && !this.testChar(this.form.user, "english")) {
           this.userPrompt = "管理员ID只能包含英文字母";
+          return false;
         }
-        else if(this.identity !== '管理员' && !this.testChar(str, "number")) {
+        else if(this.identity !== '管理员' && !this.testChar(this.form.user, "number")) {
           this.userPrompt = "用户ID只能包含数字";
+          return false;
         }
         else {
           this.userPrompt = "";
+          return true;
         }
       },
       signIn() {
-        let userData = this.$refs.userItem.value;
-        let psdData = this.$refs.psdItem.value;
-        if(userData === "") {
+        if(this.form.user === "") {
           this.userPrompt = "用户ID不能为空";
           return;
         }
+        if(this.form.psd === "") {
+          this.psdPrompt = "密码不能为空";
+          return;
+        }
+        if(!this.testData())  return;
+        let typeData;
+        if(this.identity === "管理员")  typeData = "admin";
+        else if(this.identity === "教师")  typeData = "teacher";
+        else if(this.identity === "学生")  typeData = "student";
         let obj = {
-          "user": userData,
-          "pass": psdData
+          "user": this.form.user,
+          "pass": this.form.psd,
+          "type": typeData
         }
         api.checkUser((data) => {
           if(data) {
@@ -60,7 +74,7 @@
             this.$router.push({
               name: 'manager',
               params: {
-                userName: userData
+                userName: this.form.user
               }
             });
           }
