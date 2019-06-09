@@ -23,26 +23,23 @@
       <el-form :model="form">
         <el-form-item label="学院" label-width="40px">
           <el-select v-model="form.college" placeholder="请选择学院">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option v-for="val in collegeArr" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="专业" label-width="40px">
            <el-select v-model="form.specialty" placeholder="请选择专业">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option v-for="val in specialtyArr" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="年级" label-width="40px">
            <el-select v-model="form.grade" placeholder="请选择入学年份">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option v-for="val in gradeArr" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
+        {{classArr}}
         <el-form-item label="班级" label-width="40px">
           <el-select v-model="form.class" placeholder="请选择班级">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <el-option v-for="val in classArr" :key="val" :label="val" :value="val"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -57,6 +54,7 @@
 
 <script>
   export default {
+    props: ["formatCollegeInfos", "collegeInfos"],
     data() {
       return {
         dialogVisible: true,
@@ -90,7 +88,31 @@
       }
     },
     computed: {
-    
+      collegeArr() {
+        let arr = this.collegeInfos.filter(val => {
+          return val.college;
+        })
+        return Array.from(new Set(arr));
+      },
+      specialtyArr() {
+        let arr = this.collegeInfos.filter(val => {
+          if(val.college === this.form.college)  return val.specialty;
+        })
+        return Array.from(new Set(arr));
+      },
+      gradeArr() {
+        let arr = this.collegeInfos.filter(val => {
+          if(val.specialty === this.form.specialty)  return val.grade;
+        })
+        return Array.from(new Set(arr));
+      },
+      classArr() {
+        let arr = this.collegeInfos.filter(val => {
+          if(val.grade === this.form.grade)  return val.class;
+        })
+        console.log(arr);
+        return Array.from(new Set(arr));
+      }
     }
   }
 </script>

@@ -13,7 +13,7 @@
         </el-menu-item>
       </el-menu>
     </header>
-    <component :is="componentId" style="margin-top: 60px;"></component>
+    <component :is="componentId" style="margin-top: 60px;" :collegeInfos="collegeInfos" :formatCollegeInfos="formatCollegeInfos"></component>
   </div>
 </template>
 
@@ -21,11 +21,22 @@
   import managerColleges from './manager-college'
   import managerTeachers from './manager-teachers'
   import managerStudents from './manager-students'
+  import api from '../../api/index'
 
   export default {
+    // 获取学院信息
+    created() {
+      api.getCollegeInfo((response) => {
+        this.collegeInfos = response.slice(0);
+        this.formatingCollegeInfo();
+      });
+    },
     data() {
       return {
-        componentId: "manager-colleges",
+        collegeInfos: [],
+        // 格式化后的数据
+        formatCollegeInfos: {},
+        componentId: "manager-colleges"
       }
     },
     components: {
@@ -46,10 +57,25 @@
         }).then(() => {
           this.$router.push({name: 'login'})
         })
-      }
-    },
-    computed: {
-
+      },
+      // 格式化后端返回的数据，用于左侧边栏显示
+      /* 
+        {
+          college: {
+            specialty: {
+              class: []
+            }
+          }
+        }
+      */
+      formatingCollegeInfo() {
+        this.collegeInfos.forEach((val) => {
+          if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
+          let college = this.formatCollegeInfos[val.college];
+          if(!college[val.specialty]) college[val.specialty] = [];
+          college[val.specialty].push(val.grade + val.class + "");
+        })
+      },
     }
   }
 </script>

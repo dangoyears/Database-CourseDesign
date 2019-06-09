@@ -68,17 +68,9 @@
 <script>
   import api from '../../api/index'
   export default {
-    created() {
-      api.getCollegeInfo((response) => {
-        this.collegeInfos = response.slice(0);
-        this.formatingCollegeInfo();
-      });
-    },
+    props: ["formatCollegeInfos", "collegeInfos"],
     data() {
       return {
-        obj: {a: 1, b: 2},
-        collegeInfos: [],
-        formatCollegeInfos: {},
         dialogVisible: false,
         // 输入框的提示信息
         prompt: {
@@ -148,24 +140,6 @@
           showClose: true
         });
       },
-      // 格式化后端返回的数据，用于左侧边栏显示
-      /* 
-        {
-          college: {
-            specialty: {
-              class: []
-            }
-          }
-        }
-      */
-      formatingCollegeInfo() {
-        this.collegeInfos.forEach((val) => {
-          if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
-          let college = this.formatCollegeInfos[val.college];
-          if(!college[val.specialty]) college[val.specialty] = [];
-          college[val.specialty].push(val.grade + val.class + "");
-        })
-      },
       // 删除学院数据
       deleteCollegeInfo(info) {
         console.log(info);
@@ -180,9 +154,6 @@
           });
         })
       }
-    },
-    computed: {
-
     }
   }
 </script>
