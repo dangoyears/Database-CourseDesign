@@ -8,10 +8,13 @@
         <el-table-column prop="class" label="班级"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column prop="studentId" label="学号"></el-table-column>
+        <el-table-column prop="sex" label="性别"></el-table-column>
         <el-table-column prop="status" label="状态"></el-table-column>
+        <el-table-column prop="birthday" label="出生日期"></el-table-column>
+        <el-table-column prop="age" label="年龄"></el-table-column>
         <el-table-column>
-          <template>
-            <el-button type="mini">
+          <template  slot-scope="scope">
+            <el-button type="mini" @click="editStudentInfo(scope.row)">
               <i class="el-icon-edit"></i>
             </el-button>
           </template>
@@ -60,7 +63,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="学号" label-width="50px" required :rules="rules.studentId" prop="studentId">
-              <el-input placeholder="请输入学生学号" v-model="form.studentId"></el-input>
+              <el-input placeholder="请输入学生学号" v-model="form.studentId" :disabled="editingDialog"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -82,7 +85,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="出生日期" label-width="80px" prop="birthday" :rules="rules.empty" required>
+            <el-form-item label="出生日期" label-width="80px" prop="birthday" :rules="rules.birthday" required>
               <el-date-picker type="date" v-model="form.birthday" placeholder="请选择出生日期"></el-date-picker>
             </el-form-item>
           </el-col>
@@ -108,7 +111,8 @@
     props: ["formatCollegeInfos", "collegeInfos"],
     data() {
       return {
-        dialogVisible: true,
+        dialogVisible: false,
+        editingDialog: true,
         form: {
           college: '',
           specialty: '',
@@ -129,7 +133,10 @@
             "class": "1",
             "name": "夏侯瑾轩",
             "studentId": "1706300032",
-            "status": "在读本科"
+            "sex": "男",
+            "status": "在读本科",
+            "birthday": "1998-09-06",
+            "age": "21"
           }
         ],
         // 表单的校验规则
@@ -139,13 +146,22 @@
     methods: {
       createStudentInfo() {
         this.dialogVisible = true;
+        this.editingDialog = false;
+        // 增加和编辑同用一个弹框，第一次弹出 this.$refs['form'] 会是undefined
+        if (this.$refs['form'] !== undefined) {
+          this.$refs['form'].clearValidate();
+        }
       },
       submitStudentInfos() {
         let res;
         // 校验表单中的数据
         this.$refs['form'].validate(valid => res = valid);
         if(!res) {
-          this.$message.error('填写的信息有误，请修正后再提交。');
+          this.$message({
+            message: '填写的信息有误，请修正后再提交',
+            type: 'error',
+            duration: 1000
+          });
           return;
         }
         this.$message({
@@ -153,6 +169,11 @@
           type: 'success',
           duration: 1000
         });
+      },
+      editStudentInfo(item) {
+        this.editingDialog = true;
+        this.dialogVisible = true;
+        console.log(item);
       }
     },
     computed: {
@@ -182,10 +203,19 @@
       },
       computeAge() {
         if(!this.form.birthday)  return '';
+        // 根据天数计算年龄
         let total = new Date().getTime() - Number(this.form.birthday);
         let days = parseInt(total / 1000 / 86400);
         let age = Math.ceil(days / 365);
         this.form.age = age;
+        // 格式化出生年月日，如 "xxxx-xx-xx"
+        let temp = new Date(this.form.birthday);
+        let year =  temp.getFullYear() + "";
+        let month = temp.getMonth() + 1;
+        month = month >= 10 ? month + "" : "0" + month;
+        let day = temp.getDate();
+        day = day >= 10 ? day + "" : "0" + day;
+        this.form.birthday = year + '-' + month + '-' + day;
         return (days <= 0) ? '' : age;
       }
     }
