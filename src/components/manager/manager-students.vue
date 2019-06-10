@@ -19,71 +19,83 @@
       </el-table>
     </el-main>
     <el-dialog title="学生个人信息" :visible.sync="dialogVisible" width="50%">
-      <el-form :model="form" :inline="true" label-position="left">
+      <el-form :model="form" ref="form" inline>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="学院" label-width="40px">
+            <el-form-item label="学院" label-width="50px" prop="college" :rules="rules.empty" required>
               <el-select v-model="form.college" placeholder="请选择学院">
-                <el-option v-for="val in collegeArr" :key="val" :label="val" :value="val"></el-option>
+                <el-option v-for="val in collegeArr" :key="val" :value="val"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="专业" width="40px">
-              <el-select v-model="form.specialty" placeholder="请选择专业" class="create-form-item">
-                <el-option v-for="val in specialtyArr" :key="val" :label="val" :value="val"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="年级" label-width="40px">
-              <el-select v-model.number="form.grade" placeholder="请选择入学年份">
-                <el-option v-for="val in gradeArr" :key="val" :label="val" :value="val"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="班级" label-width="40px">
-              <el-select v-model.number="form.class" placeholder="请选择班级">
-                <el-option v-for="val in classArr" :key="val" :label="val" :value="val"></el-option>
+            <el-form-item label="专业" label-width="50px" prop="specialty" :rules="rules.empty" required>
+              <el-select v-model="form.specialty" placeholder="请选择专业">
+                <el-option v-for="val in specialtyArr" :key="val" :value="val"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="姓名" label-width="40px">
-              <el-input placeholder="请输入学生姓名" v-model.number="form.name"></el-input>
+            <el-form-item label="年级" label-width="50px" prop="grade" :rules="rules.empty" required>
+              <el-select v-model="form.grade" placeholder="请选择入学年份">
+                <el-option v-for="val in gradeArr" :key="val" :value="val"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="学号" label-width="40px">
+            <el-form-item label="班级" label-width="50px" prop="class" :rules="rules.empty" required>
+              <el-select v-model="form.class" placeholder="请选择班级">
+                <el-option v-for="val in classArr" :key="val" :value="val"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="姓名" label-width="50px" required :rules="rules.userName" prop="name">
+              <el-input placeholder="请输入学生姓名" v-model="form.name"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="学号" label-width="50px" required :rules="rules.studentId" prop="studentId">
               <el-input placeholder="请输入学生学号" v-model="form.studentId"></el-input>
             </el-form-item>
-
           </el-col>
         </el-row>
-        <el-form-item label="性别" label-width="40px">
-          <el-select v-model="form.sex" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="年龄" label-width="50px" prop="age" :rules="rules.number">
-          <el-input placeholder="请输入学生年龄" v-model.number="form.age"></el-input>
-        </el-form-item>
-        <el-form-item label="学历" label-width="40px">
-          <el-select v-model="form.sex" placeholder="请选择学历">
-            <el-option label="在读本科" value="在读本科"></el-option>
-            <el-option label="在读研究生" value="在读研究生"></el-option>
-          </el-select>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="性别" label-width="50px" prop="sex" :rules="rules.empty" required>
+              <el-radio v-model="form.sex" label="男">男</el-radio>
+              <el-radio v-model="form.sex" label="女">女</el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="学历" label-width="50px" prop="status" :rules="rules.empty" required>
+              <el-radio-group v-model="form.status">
+                <el-radio-button label="在读本科生">在读本科生</el-radio-button>
+                <el-radio-button label="在读研究生">在读研究生</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="出生日期" label-width="80px" prop="birthday" :rules="rules.empty" required>
+              <el-date-picker type="date" v-model="form.birthday" placeholder="请选择出生日期"></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="年龄" label-width="50px">
+              <el-input disabled :placeholder="computeAge"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="">确定</el-button>
+      <div slot="footer">
+        <el-button @click="dialogVisible=false">取消</el-button>
+        <el-button type="primary" @click="submitStudentInfos">确定</el-button>
       </div>
     </el-dialog>
     <img src="../../assets/add.png" class="addIcon" @click="createStudentInfo">
@@ -91,6 +103,7 @@
 </template>
 
 <script>
+  import rules from '../../base/rules'
   export default {
     props: ["formatCollegeInfos", "collegeInfos"],
     data() {
@@ -105,6 +118,7 @@
           studentId: '',
           status: '',
           sex: '',
+          birthday: '',
           age: ''
         },
         studentInfo: [
@@ -118,17 +132,27 @@
             "status": "在读本科"
           }
         ],
-        rules: {
-          number: [
-            {required: true, message: '输入不能为空', trigger: ['blur', 'change']},
-            {type: 'number', message: '输入值必须为数字', trigger: ['blur', 'change']}
-          ]
-        }
+        // 表单的校验规则
+        rules: rules
       }
     },
     methods: {
       createStudentInfo() {
         this.dialogVisible = true;
+      },
+      submitStudentInfos() {
+        let res;
+        // 校验表单中的数据
+        this.$refs['form'].validate(valid => res = valid);
+        if(!res) {
+          this.$message.error('填写的信息有误，请修正后再提交。');
+          return;
+        }
+        this.$message({
+          message: '创建成功。',
+          type: 'success',
+          duration: 1000
+        });
       }
     },
     computed: {
@@ -155,8 +179,16 @@
           if(val.grade === this.form.grade)  return val.class;
         })
         return Array.from(new Set(arr.filter(val => val)));
+      },
+      computeAge() {
+        if(!this.form.birthday)  return '';
+        let total = new Date().getTime() - Number(this.form.birthday);
+        let days = parseInt(total / 1000 / 86400);
+        let age = Math.ceil(days / 365);
+        this.form.age = age;
+        return (days <= 0) ? '' : age;
       }
-    },
+    }
   }
 </script>
 
@@ -172,13 +204,5 @@
   .addIcon:hover {
     transform: scale(1.2, 1.2) rotate(180deg);
     transition: all linear .2s; 
-  }
-  el-form-item {
-    display: inline-block;
-  }
-  .create-form-item {
-    /* width: 40%; */
-    /* float: left; */
-    /* display: inline-block; */
   }
 </style>
