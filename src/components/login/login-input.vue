@@ -70,11 +70,17 @@
         }
         api.checkUser((data) => {
           if(data) {
+            let obj = {
+              user: this.form.user,
+              token: data
+            }
+            sessionStorage.setItem("DBcourse-login", JSON.stringify(obj));
             this.psdPrompt = "";
             this.$router.push({
               name: 'manager',
               params: {
-                userName: this.form.user
+                userName: this.form.user,
+                token: data
               }
             });
           }

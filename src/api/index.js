@@ -20,8 +20,8 @@ export default {
     })
   },
   // 获取学院信息
-  getCollegeInfo(callback) {
-    axios.get('https://dbcd.qfstudio.net/read/college')
+  getCollegeInfo(callback, token) {
+    axios.get(`https://dbcd.qfstudio.net/read/college?token=${token}`)
     .then(function(response) {
       callback(response.data.data);
     })

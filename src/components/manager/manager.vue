@@ -1,12 +1,12 @@
 <template>
   <div>
     <header class="manager-header">
-      <el-menu mode="horizontal" @select="handleSelect" >
+      <el-menu mode="horizontal" @select="handleSelect" default-active="colleges">
         <el-menu-item index="colleges">学院信息</el-menu-item>
         <el-menu-item index="teachers">教师信息</el-menu-item>
         <el-menu-item index="students">学生信息</el-menu-item>
         <el-menu-item class="user-tab">
-          <span class="user">Hello, {{$route.params.userName}}</span>
+          <span class="user">Hello, {{userName}}</span>
         </el-menu-item>
         <el-menu-item class="user-tab" @click="switchUser">
           <img src="../../assets/switch1.png" alt="切换账号">
@@ -26,13 +26,17 @@
   export default {
     // 获取学院信息
     created() {
+      // 将用户名和token存进sessionStorge里，刷新页面后仍能保持登陆状态
+      let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
+      this.userName = sessionData.user;
       api.getCollegeInfo((response) => {
         this.collegeInfos = response.slice(0);
         this.formatingCollegeInfo();
-      });
+      }, sessionData.token);
     },
     data() {
       return {
+        userName: '',
         collegeInfos: [],
         // 格式化后的数据
         formatCollegeInfos: {},

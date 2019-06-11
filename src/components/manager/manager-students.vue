@@ -13,7 +13,7 @@
         <el-table-column prop="birthday" label="出生日期" width="120"></el-table-column>
         <el-table-column prop="age" label="年龄" width="80"></el-table-column>
         <el-table-column prop="idCard" label="身份证"></el-table-column>
-        <el-table-column width="70">
+        <el-table-column width="60">
           <template slot-scope="scope">
             <el-button type="mini" @click="editStudentInfo(scope.row)">
               <i class="el-icon-edit"></i>
