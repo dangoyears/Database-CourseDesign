@@ -2,22 +2,30 @@
   <el-container>
     <el-main>
       <el-table :data="studentInfo">
-        <el-table-column prop="college" label="学院"></el-table-column>
-        <el-table-column prop="specialty" label="专业"></el-table-column>
-        <el-table-column prop="grade" label="年级"></el-table-column>
-        <el-table-column prop="class" label="班级"></el-table-column>
-        <el-table-column prop="name" label="姓名"></el-table-column>
-        <el-table-column prop="studentId" label="学号"></el-table-column>
-        <el-table-column prop="sex" label="性别"></el-table-column>
-        <el-table-column prop="status" label="状态"></el-table-column>
-        <el-table-column prop="birthday" label="出生日期"></el-table-column>
-        <el-table-column prop="age" label="年龄"></el-table-column>
-        <el-table-column>
-          <template  slot-scope="scope">
+        <el-table-column prop="college" label="学院" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="specialty" label="专业" width="150" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="grade" label="年级" width="80"></el-table-column>
+        <el-table-column prop="class" label="班级" width="80"></el-table-column>
+        <el-table-column prop="name" label="姓名" width="110"></el-table-column>
+        <el-table-column prop="studentId" label="学号" width="120"></el-table-column>
+        <el-table-column prop="sex" label="性别" width="80"></el-table-column>
+        <el-table-column prop="status" label="状态" width="110"></el-table-column>
+        <el-table-column prop="birthday" label="出生日期" width="120"></el-table-column>
+        <el-table-column prop="age" label="年龄" width="80"></el-table-column>
+        <el-table-column prop="idCard" label="身份证"></el-table-column>
+        <el-table-column width="70">
+          <template slot-scope="scope">
             <el-button type="mini" @click="editStudentInfo(scope.row)">
               <i class="el-icon-edit"></i>
             </el-button>
           </template>
+        </el-table-column>
+         <el-table-column width="70">
+            <template slot-scope="scope">
+              <el-button size="mini" type="danger" @click="deleteStudentInfo(scope.row)">
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </template>
         </el-table-column>
       </el-table>
     </el-main>
@@ -62,7 +70,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="学号" label-width="50px" required :rules="rules.studentId" prop="studentId">
+            <el-form-item label="学号" label-width="50px" required :rules="rules.numberId" prop="studentId">
               <el-input placeholder="请输入学生学号" v-model="form.studentId" :disabled="editingDialog"></el-input>
             </el-form-item>
           </el-col>
@@ -95,6 +103,11 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-form-item label="身份证" label-width="65px" prop="idCard" :rules="rules.idCard" required>
+            <el-input v-model="form.idCard" placeholder="请输入身份证证件号"></el-input>
+          </el-form-item>
+        </el-row>
       </el-form>
       <div slot="footer">
         <el-button @click="dialogVisible=false">取消</el-button>
@@ -112,7 +125,7 @@
     data() {
       return {
         dialogVisible: false,
-        editingDialog: true,
+        editingDialog: false,
         form: {
           college: '',
           specialty: '',
@@ -123,7 +136,9 @@
           status: '',
           sex: '',
           birthday: '',
-          age: ''
+          age: '',
+          idCard: '',
+          password: ''
         },
         studentInfo: [
           {
@@ -134,9 +149,10 @@
             "name": "夏侯瑾轩",
             "studentId": "1706300032",
             "sex": "男",
-            "status": "在读本科",
+            "status": "在读本科生",
             "birthday": "1998-09-06",
-            "age": "21"
+            "age": "21",
+            "idCard": "440582199708310612"
           }
         ],
         // 表单的校验规则
@@ -145,9 +161,15 @@
     },
     methods: {
       createStudentInfo() {
+        if(this.editingDialog) {
+          this.form = {};
+          this.$nextTick(() => {
+            this.$refs['form'].clearValidate();
+          })
+        }
         this.dialogVisible = true;
         this.editingDialog = false;
-        // 增加和编辑同用一个弹框，第一次弹出 this.$refs['form'] 会是undefined
+        // 增加和编辑同用一个弹框，第一次弹出 this.$refs['form'] 会是undefined，或是用 $nextTick
         if (this.$refs['form'] !== undefined) {
           this.$refs['form'].clearValidate();
         }
@@ -164,6 +186,8 @@
           });
           return;
         }
+        // 学生账号登陆密码为身份证后六位
+        this.form.password = this.form.idCard.slice(-6);
         this.$message({
           message: '创建成功。',
           type: 'success',
@@ -171,9 +195,12 @@
         });
       },
       editStudentInfo(item) {
+        this.form = item;
         this.editingDialog = true;
         this.dialogVisible = true;
-        console.log(item);
+      },
+      deleteStudentInfo(item) {
+        alert("delete ", item);
       }
     },
     computed: {
@@ -202,6 +229,10 @@
         return Array.from(new Set(arr.filter(val => val)));
       },
       computeAge() {
+        // 如果是编辑信息，需要将出生日期转换为时间戳的形式，才好计算年龄
+        if(this.editingDialog) {
+          this.form.birthday = new Date(this.form.birthday);
+        }
         if(!this.form.birthday)  return '';
         // 根据天数计算年龄
         let total = new Date().getTime() - Number(this.form.birthday);

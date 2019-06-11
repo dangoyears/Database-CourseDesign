@@ -6,7 +6,7 @@ export default {
     trigger: ['blur', 'change']
     }
   ],
-  studentId: [
+  numberId: [
     {
       required: true,
       message: '输入不能为空',
@@ -14,7 +14,7 @@ export default {
     },
     {
       pattern: /^[0-9]{10}$/,
-      message: '学号必须为10个数字',
+      message: '输入必须为10个数字',
       trigger: ['blur']
     }
   ],
@@ -44,6 +44,7 @@ export default {
     {
       // 自定义校验函数
       validator: function(rule, value, callback) {
+        if(!value) return "";
         let temp = new Date();
         let year =  temp.getFullYear() + "";
         let month = temp.getMonth() + 1;
@@ -61,6 +62,18 @@ export default {
         }
       },
       trigger: ['blur', 'change']
+    }
+  ],
+  idCard: [
+    {
+      required: true,
+      message: '输入不能为空',
+      trigger: ['blur', 'change']
+    },
+    {
+      pattern: /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/,
+      message: '证件号码格式有误！',
+      trigger: 'blur'
     }
   ]
 }
