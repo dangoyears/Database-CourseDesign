@@ -158,7 +158,6 @@
           })
         }
         this.dialogVisible = true;
-        this.editingDialog = false;
         // 增加和编辑同用一个弹框，第一次弹出 this.$refs['form'] 会是undefined，或是用 $nextTick
         if (this.$refs['form'] !== undefined) {
           this.$refs['form'].clearValidate();
@@ -185,12 +184,25 @@
         });
       },
       editTeacherInfo(item) {
-        this.form = item;
+        // 需要深拷贝一份，否则编辑时会马上修改到表格中
+        this.form = JSON.parse(JSON.stringify(item));
         this.editingDialog = true;
         this.dialogVisible = true;
       },
       deleteTeacherInfo(item) {
-        alert("delete ", item);
+        this.$confirm(`是否确定要永久删除${item.name}的个人信息?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!',
+            duration: 1000
+          })
+        })
+        .catch(() => {});
       }
     },
     computed: {

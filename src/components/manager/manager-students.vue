@@ -195,12 +195,25 @@
         });
       },
       editStudentInfo(item) {
-        this.form = item;
+        // 需要深拷贝一份，否则编辑时会马上修改到表格中
+        this.form = JSON.parse(JSON.stringify(item));
         this.editingDialog = true;
         this.dialogVisible = true;
       },
       deleteStudentInfo(item) {
-        alert("delete ", item);
+        this.$confirm(`是否确定要永久删除${item.name}的个人信息?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!',
+            duration: 1000
+          })
+        })
+        .catch(() => {});
       }
     },
     computed: {

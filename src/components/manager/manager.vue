@@ -13,7 +13,7 @@
         </el-menu-item>
       </el-menu>
     </header>
-    <component :is="componentId" style="margin-top: 60px;" :collegeInfos="collegeInfos" :formatCollegeInfos="formatCollegeInfos"></component>
+    <component :is="componentId" style="margin-top: 60px;" :collegeInfos="collegeInfos" :formatCollegeInfos="formatCollegeInfos" :token="token"></component>
   </div>
 </template>
 
@@ -29,14 +29,16 @@
       // 将用户名和token存进sessionStorge里，刷新页面后仍能保持登陆状态
       let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
       this.userName = sessionData.user;
+      this.token = sessionData.token;
       api.getCollegeInfo((response) => {
         this.collegeInfos = response.slice(0);
         this.formatingCollegeInfo();
-      }, sessionData.token);
+      }, this.token);
     },
     data() {
       return {
         userName: '',
+        token: '',
         collegeInfos: [],
         // 格式化后的数据
         formatCollegeInfos: {},
@@ -60,7 +62,7 @@
           type: 'warning'
         }).then(() => {
           this.$router.push({name: 'login'})
-        })
+        }).catch(() => {})
       },
       // 格式化后端返回的数据，用于左侧边栏显示
       /* 

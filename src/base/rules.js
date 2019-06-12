@@ -6,6 +6,30 @@ export default {
     trigger: ['blur', 'change']
     }
   ],
+  number: [
+    {
+      required: true,
+      message: '输入不能为空',
+      trigger: ['blur', 'change']
+    },
+    {
+      pattern: /^[0-9]{1,2}$/,
+      message: '输入需要是1-2位数字',
+      trigger: ['blur', 'change']
+    }
+  ],
+  collegeName: [
+    {
+      required: true,
+      message: '输入不能为空',
+      trigger: ['blur', 'change']
+    },
+    {
+      pattern: /^[一-龥]{4,20}$/,
+      message: '输入需要是4-20个汉字',
+      trigger: ['blur', 'change']
+    }
+  ],
   numberId: [
     {
       required: true,

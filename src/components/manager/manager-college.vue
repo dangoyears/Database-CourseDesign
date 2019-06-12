@@ -21,10 +21,10 @@
 
     <el-container>
       <el-main>
-        <el-table :data="collegeInfos">
-          <el-table-column prop="college" label="学院"></el-table-column>
+        <el-table :data="collegeInfos" show-summary summary-method>
+          <el-table-column prop="college" label="学院" width="300"></el-table-column>
           <el-table-column prop="specialty" label="专业"></el-table-column>
-          <el-table-column prop="grade" label="年级"></el-table-column>
+          <el-table-column prop="grade" label="入学年份"></el-table-column>
           <el-table-column prop="class" label="班级"></el-table-column>
           <el-table-column prop="sum" label="人数"></el-table-column>
           <el-table-column>
@@ -39,26 +39,22 @@
     </el-container>
 
     <el-dialog title="新建学院信息" :visible.sync="dialogVisible" width="30%">
-      <el-form :model="form">
-        <el-form-item label="学院" label-width="40px">
-          <el-input v-model="form.college" autocomplete="off" @input="testFormInfo"></el-input>
-          <p class="dialog-prompt">{{prompt.college}}</p>
+      <el-form :model="form" ref="form">
+        <el-form-item label="学院" label-width="50px" prop="college" :rules="rules.collegeName">
+          <el-input v-model="form.college" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="专业" label-width="40px">
-          <el-input v-model="form.specialty" autocomplete="off" @input="testFormInfo"></el-input>
-          <p class="dialog-prompt">{{prompt.specialty}}</p>
+        <el-form-item label="专业" label-width="50px" prop="specialty" :rules="rules.collegeName">
+          <el-input v-model="form.specialty" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="年级" label-width="40px">
-          <el-input v-model="form.grade" autocomplete="off" @input="testFormInfo"></el-input>
-          <p class="dialog-prompt">{{prompt.grade}}</p>
+        <el-form-item label="年级" label-width="50px" prop="grade" :rules="rules.number">
+          <el-input v-model="form.grade" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="班级" label-width="40px">
-          <el-input v-model="form.class" autocomplete="off" @input="testFormInfo"></el-input>
-          <p class="dialog-prompt">{{prompt.class}}</p>
+        <el-form-item label="班级" label-width="50px" prop="class" :rules="rules.number">
+          <el-input v-model="form.class" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="this.dialogVisible = false">取消</el-button>
+        <el-button @click="dialogVisible=false">取消</el-button>
         <el-button type="primary" @click="submitCollegeInfo">确定</el-button>
       </div>
     </el-dialog>
@@ -67,70 +63,45 @@
 
 <script>
   import api from '../../api/index'
+  import rules from '../../base/rules'
+
   export default {
-    props: ["formatCollegeInfos", "collegeInfos"],
+    props: ["formatCollegeInfos", "collegeInfos", "token"],
     data() {
       return {
         dialogVisible: false,
-        // 输入框的提示信息
-        prompt: {
-          college: '',
-          specialty: '',
-          grade: '',
-          class: ''
-        },
+        rules: rules,
         // 弹出框的表单信息
         form: {
           college: '',
           specialty: '',
           grade: '',
-          class: ''
-        },
+          class: '',
+          token: this.token
+        }
       }
     },
     methods: {
       // 打开弹出框并初始化表单信息
       openCollegeInfo() {
-        for(let key in this.prompt) {
-          this.prompt[key] = "";
-          this.form[key] = "";
-        }
         this.dialogVisible = true;
-      },
-      // 校验表单信息是否符合规则
-      testFormInfo() {
-        for(let key in this.form) {
-          if(!this.testLength(this.form[key], 20)) {
-            this.prompt[key] = "输入的字数不能超过20个";
-            return false;
-          }
-          else if((key === "college" || key === "specialty") && !this.testChar(this.form[key], "chinese")) {
-            let temp = (key === "college") ? "学院名称" : "专业名称"; 
-            this.prompt[key] = `${temp}只能包含中文`;
-            return false;
-          }
-          else if((key === "grade" || key === "class") && !this.testChar(this.form[key], "number")) {
-            let temp = (key === "grade") ? "年级" : "班级"; 
-            this.prompt[key] = `${temp}只能包含数字`;
-            return false;
-          }
-          else {
-            this.prompt[key] = "";
-          }
-        }
-        return true;
+        this.$nextTick(() => {
+            this.$refs['form'].clearValidate();
+        })
       },
       // 提交表单信息
       submitCollegeInfo() {
-        let mark = false;
-        for(let key in this.form) {
-          if(this.form[key].length === 0) {
-            this.prompt[key] = `输入信息不能为空`;
-            mark = true;
-          }
+        let res;
+        // 校验表单中的数据
+        this.$refs['form'].validate(valid => res = valid);
+        if(!res) {
+          this.$message({
+            message: '填写的信息有误，请修正后再提交',
+            type: 'error',
+            duration: 1000
+          });
+          return;
         }
-        if(mark)  return;
-        if(!this.testFormInfo())  return;
         api.uploadCollegeInfo(this.form);
         this.dialogVisible = false;
         this.$message({
@@ -139,6 +110,7 @@
           duration: 1000,
           showClose: true
         });
+        this.form = {};
       },
       // 删除学院数据
       deleteCollegeInfo(info) {
@@ -147,13 +119,15 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
+        })
+        .then(() => {
           this.$message({
             type: 'success',
             message: '删除成功'
           });
         })
-      }
+        .catch(() => {});
+      },
     }
   }
 </script>
@@ -168,11 +142,6 @@
   }
   .manager-add {
     text-align: center;
-  }
-  .dialog-prompt {
-    color: rgb(204, 10, 10);
-    font-size: 0.8rem;
-    margin-bottom: -25px;
   }
   .labelStyle {
     margin-right: 10px;
