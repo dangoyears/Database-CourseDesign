@@ -3,7 +3,7 @@
     <el-main>
       <el-table :data="studentInfo">
         <el-table-column prop="college" label="学院" show-overflow-tooltip sortable></el-table-column>
-        <el-table-column prop="specialty" label="专业" width="150" show-overflow-tooltip sortable></el-table-column>
+        <el-table-column prop="specialty" label="专业" width="120" show-overflow-tooltip sortable></el-table-column>
         <el-table-column prop="grade" label="年级" width="80" sortable></el-table-column>
         <el-table-column prop="class" label="班级" width="80" sortable></el-table-column>
         <el-table-column prop="name" label="姓名" width="110" sortable></el-table-column>
@@ -13,6 +13,7 @@
         <el-table-column prop="birthday" label="出生日期" width="120" sortable></el-table-column>
         <el-table-column prop="age" label="年龄" width="80" sortable></el-table-column>
         <el-table-column prop="idCard" label="身份证" sortable></el-table-column>
+        <el-table-column prop="yearSystem" label="学年制" width="90" sortable></el-table-column>
         <el-table-column width="60">
           <template slot-scope="scope">
             <el-button type="mini" @click="editStudentInfo(scope.row)">
@@ -20,7 +21,7 @@
             </el-button>
           </template>
         </el-table-column>
-         <el-table-column width="70">
+         <el-table-column width="65">
             <template slot-scope="scope">
               <el-button size="mini" type="danger" @click="deleteStudentInfo(scope.row)">
                 <i class="el-icon-delete"></i>
@@ -70,25 +71,22 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="学号" label-width="50px" required :rules="rules.numberId" prop="studentId">
-              <el-input placeholder="请输入学生学号" v-model="form.studentId" :disabled="editingDialog"></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
             <el-form-item label="性别" label-width="50px" prop="sex" :rules="rules.empty" required>
               <el-radio v-model="form.sex" label="男">男</el-radio>
               <el-radio v-model="form.sex" label="女">女</el-radio>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
-            <el-form-item label="学历" label-width="50px" prop="status" :rules="rules.empty" required>
-              <el-radio-group v-model="form.status">
-                <el-radio-button label="在读本科生">在读本科生</el-radio-button>
-                <el-radio-button label="在读研究生">在读研究生</el-radio-button>
-              </el-radio-group>
+            <el-form-item label="学号" label-width="50px" required :rules="rules.numberId" prop="studentId">
+              <el-input placeholder="请输入学生学号" v-model="form.studentId" :disabled="editingDialog"></el-input>
             </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="身份证" label-width="65px" prop="idCard" :rules="rules.idCard" required>
+              <el-input v-model="form.idCard" placeholder="请输入身份证证件号"></el-input>
+           </el-form-item>
           </el-col>
         </el-row>
         <el-row>
@@ -98,15 +96,26 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="年龄" label-width="50px">
+            <el-form-item label="年龄" label-width="40px">
               <el-input disabled :placeholder="computeAge"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="身份证" label-width="65px" prop="idCard" :rules="rules.idCard" required>
-            <el-input v-model="form.idCard" placeholder="请输入身份证证件号"></el-input>
-          </el-form-item>
+          <el-col :span="10">
+            <el-form-item label="学年制" label-width="65px" prop="yearSystem" :rules="rules.number">
+              <el-input v-model="form.yearSystem" placeholder="请输入学年制"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item label="学历" label-width="50px" prop="status" :rules="rules.empty" required>
+              <el-radio-group v-model="form.status">
+                <el-radio-button label="在读本科生">在读本科生</el-radio-button>
+                <el-radio-button label="在读研究生">在读研究生</el-radio-button>
+                <el-radio-button label="在读博士生">在读博士生</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer">
@@ -137,6 +146,7 @@
           sex: '',
           birthday: '',
           age: '',
+          yearSystem: '',
           idCard: '',
           password: ''
         },
@@ -152,7 +162,8 @@
             "status": "在读本科生",
             "birthday": "1998-09-06",
             "age": "21",
-            "idCard": "440582199708310612"
+            "idCard": "440582199708310612",
+            "yearSystem": "4"
           }
         ],
         // 表单的校验规则

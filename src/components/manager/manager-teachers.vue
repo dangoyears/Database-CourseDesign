@@ -11,7 +11,7 @@
         <el-table-column prop="birthday" label="出生日期" width="140" sortable></el-table-column>
         <el-table-column prop="age" label="年龄" width="100" sortable></el-table-column>
         <el-table-column prop="idCard" label="身份证" sortable></el-table-column>
-        <el-table-column prop="identity" label="权限" width="120" sortable></el-table-column>
+        <el-table-column prop="position" label="状态" width="120" sortable></el-table-column>
         <el-table-column width="60">
           <template slot-scope="scope">
             <el-button type="mini" @click="editTeacherInfo(scope.row)">
@@ -92,10 +92,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="权限" label-width="50px" prop="identity" :rules="rules.empty" required sortable>
-              <el-radio-group v-model="form.identity">
+            <el-form-item label="权限" label-width="50px" prop="position" :rules="rules.empty" required sortable>
+              <el-radio-group v-model="form.position">
                 <el-radio-button label="教务办主任">教务办主任</el-radio-button>
                 <el-radio-button label="普通教师">普通教师</el-radio-button>
+                <el-radio-button label="已离职">已离职</el-radio-button>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -129,7 +130,7 @@
           age: '',
           idCard: '',
           password: '',
-          identity: ""
+          position: ""
         },
         teacherInfo: [
           {
@@ -142,7 +143,7 @@
             "birthday": "1998-09-06",
             "age": "21",
             "idCard": "440582199708310612",
-            "identity": "教务办主任"
+            "position": "教务办主任"
           }
         ],
         // 表单的校验规则

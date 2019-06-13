@@ -114,7 +114,7 @@
     },
     data() {
       return {
-        setClassInfoVisible: false,
+        setClassInfoVisible: true,
         dialogVisible: false,
         rules: rules,
         search: '',
