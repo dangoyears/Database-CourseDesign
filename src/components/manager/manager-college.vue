@@ -21,12 +21,23 @@
 
     <el-container>
       <el-main>
-        <el-table :data="collegeInfos" show-summary summary-method>
-          <el-table-column prop="college" label="学院" width="300"></el-table-column>
-          <el-table-column prop="specialty" label="专业"></el-table-column>
-          <el-table-column prop="grade" label="入学年份"></el-table-column>
-          <el-table-column prop="class" label="班级"></el-table-column>
-          <el-table-column prop="sum" label="人数"></el-table-column>
+        <el-table :data="collegeInfos" show-summary :summary-method="summaryCompute" :default-sort = "{prop: 'college', order: 'ascending'}">
+          <el-table-column prop="college" label="学院" width="300" sortable
+            :filters="filterCollegeArr"
+            :filter-method="filterCollege"
+          ></el-table-column>
+          <el-table-column prop="specialty" label="专业" sortable></el-table-column>
+          <el-table-column prop="grade" label="入学年份" sortable></el-table-column>
+          <el-table-column prop="class" label="班级" sortable></el-table-column>
+          <el-table-column prop="sum" label="人数" sortable></el-table-column>
+          <el-table-column align="right">
+            <template slot="header" slot-scope="scope">
+              <el-input
+                v-model="search"
+                size="mini"
+                placeholder="输入关键字搜索"/>
+            </template>
+          </el-table-column>
           <el-table-column>
             <template slot-scope="scope">
               <el-button size="mini" type="danger" @click="deleteCollegeInfo(scope.row)">
@@ -66,11 +77,23 @@
   import rules from '../../base/rules'
 
   export default {
+    mounted() {
+      // 不知道为什么，对于默认的子组件，props中的对象会是一个Observer，无法获取到里面的数据。使用nextTick也没用，只能在切换组件或等一段时间之后才能恢复成正常的对象格式（更诡异的是如果我在代码前面加两句console.log打印prop中的值就不会出现这个问题了...Orz）
+      // 所以不使用computed来计算filterCollege。采用在mounted中使用定时器读取数据。
+      setTimeout(() => {
+        let temp = Object.keys(this.formatCollegeInfos);
+        temp.forEach((val) => {
+          this.filterCollegeArr.push({text: val, value: val});
+        })
+      }, 1000)
+    },
     props: ["formatCollegeInfos", "collegeInfos", "token"],
     data() {
       return {
         dialogVisible: false,
         rules: rules,
+        search: '',
+        filterCollegeArr: [],
         // 弹出框的表单信息
         form: {
           college: '',
@@ -128,6 +151,36 @@
         })
         .catch(() => {});
       },
+      // 设置学院表单的合计信息
+      summaryCompute(param) {
+        let {columns, data} = param;
+        let res = {};
+        let collegeArr = [];
+        let specialtyArr = [];
+        let gradeArr = [];
+        for(let i=0, len=data.length; i<len; i++) {
+          collegeArr.push(data[i].college);
+          specialtyArr.push(data[i].specialty);
+          gradeArr.push(data[i].grade);
+          res.class = res.class + 1 || 1;
+          res.sum = res.sum + Number(data[i].sum) || Number(data[i].sum);
+        }
+        res.college = `总共有 ${[...new Set(collegeArr)].length} 个学院`;
+        res.specialty = `设有 ${[...new Set(specialtyArr)].length} 个专业`;
+        res.grade = `已有 ${[...new Set(gradeArr)].length} 届学生`;
+        res.class = `总共有 ${res.class} 个班级`;
+        res.sum = `总共有 ${res.sum} 名学生`;
+        const sums = [];
+        columns.forEach((val, index) => {
+          sums.push(res[val.property]);
+        })
+        return sums;
+      },
+      // 筛选学院
+      filterCollege(value, row, column) {
+        const property = column['property'];
+        return row[property] === value;
+      }
     }
   }
 </script>

@@ -113,7 +113,7 @@
 <script>
   import rules from '../../base/rules'
   export default {
-    props: ["formatCollegeInfos", "collegeInfos"],
+    props: ["collegeInfos"],
     data() {
       return {
         dialogVisible: false,
