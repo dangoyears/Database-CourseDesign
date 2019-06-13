@@ -13,7 +13,8 @@
         </el-menu-item>
       </el-menu>
     </header>
-    <component :is="componentId" style="margin-top: 60px;" :collegeInfos="collegeInfos" :formatCollegeInfos="formatCollegeInfos" :token="token"></component>
+    <component :is="componentId" style="margin-top: 60px;" 
+    :collegeInfos="collegeInfos" :formatCollegeInfos="formatCollegeInfos" :token="token"></component>
   </div>
 </template>
 
@@ -86,7 +87,7 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="less">
   .manager-header {
     width: 100%;
     position: fixed;
@@ -105,5 +106,17 @@
     line-height: 30px;
     padding-left: 35px;
     margin-right: 50px;
+  }
+  /deep/ .addIcon {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    right: 4vw;
+    bottom: 8vh;
+    border-radius: 50%;
+  }
+  /deep/ .addIcon:hover {
+    transform: scale(1.2, 1.2) rotate(180deg);
+    transition: all linear .2s; 
   }
 </style>

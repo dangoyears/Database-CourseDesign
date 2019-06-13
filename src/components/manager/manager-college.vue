@@ -21,23 +21,21 @@
 
     <el-container>
       <el-main>
-        <el-table :data="collegeInfos" show-summary :summary-method="summaryCompute" :default-sort = "{prop: 'college', order: 'ascending'}">
+        <el-table :data="collegeInfos" show-summary :summary-method="summaryCompute" :default-sort="{prop: 'college', order: 'ascending'}">
           <el-table-column prop="college" label="学院" width="300" sortable
             :filters="filterCollegeArr"
-            :filter-method="filterCollege"
+            :filter-method="filterHandler"
           ></el-table-column>
-          <el-table-column prop="specialty" label="专业" sortable></el-table-column>
-          <el-table-column prop="grade" label="入学年份" sortable></el-table-column>
+          <el-table-column prop="specialty" label="专业" sortable
+            :filters="filterSpecialtyArr"
+            :filter-method="filterHandler"
+          ></el-table-column>
+          <el-table-column prop="grade" label="入学年份" sortable
+            :filters="filterGradeArr"
+            :filter-method="filterHandler"
+          ></el-table-column>
           <el-table-column prop="class" label="班级" sortable></el-table-column>
           <el-table-column prop="sum" label="人数" sortable></el-table-column>
-          <el-table-column align="right">
-            <template slot="header" slot-scope="scope">
-              <el-input
-                v-model="search"
-                size="mini"
-                placeholder="输入关键字搜索"/>
-            </template>
-          </el-table-column>
           <el-table-column>
             <template slot-scope="scope">
               <el-button size="mini" type="danger" @click="deleteCollegeInfo(scope.row)">
@@ -69,31 +67,60 @@
         <el-button type="primary" @click="submitCollegeInfo">确定</el-button>
       </div>
     </el-dialog>
+    <img src="../../assets/add.png" class="addIcon" @click="setClassInfo">
+    <class-dialog 
+      :dialogVisible="setClassInfoVisible"
+      v-on:update:dialogVisible="changeClassDialogVisible"
+      ></class-dialog>
   </el-container>
 </template>
 
 <script>
   import api from '../../api/index'
   import rules from '../../base/rules'
+  import classDialog from '../base/setClassDialog'
 
   export default {
     mounted() {
       // 不知道为什么，对于默认的子组件，props中的对象会是一个Observer，无法获取到里面的数据。使用nextTick也没用，只能在切换组件或等一段时间之后才能恢复成正常的对象格式（更诡异的是如果我在代码前面加两句console.log打印prop中的值就不会出现这个问题了...Orz）
       // 所以不使用computed来计算filterCollege。采用在mounted中使用定时器读取数据。
       setTimeout(() => {
-        let temp = Object.keys(this.formatCollegeInfos);
-        temp.forEach((val) => {
+        let gradeTemp = Object.keys(this.formatCollegeInfos);
+        // 集成所有的学院名
+        let collegeTemp = Object.keys(this.formatCollegeInfos);
+        collegeTemp.forEach((val) => {
           this.filterCollegeArr.push({text: val, value: val});
+        })
+        // 集成所有的专业名
+        collegeTemp.forEach((val) => {
+          for(let key in this.formatCollegeInfos[val]) {
+            this.filterSpecialtyArr.push({text: key, value: key});
+          }
+        })
+        // 集成所有的入学年份
+        let temp = [];
+        this.collegeInfos.forEach((val) => {
+          temp.push(val.grade);
+        })
+        temp.sort();
+        Array.from(new Set(temp)).forEach((val) => {
+          this.filterGradeArr.push({text: val, value: val});
         })
       }, 1000)
     },
     props: ["formatCollegeInfos", "collegeInfos", "token"],
+    components: {
+      'class-dialog': classDialog
+    },
     data() {
       return {
+        setClassInfoVisible: false,
         dialogVisible: false,
         rules: rules,
         search: '',
         filterCollegeArr: [],
+        filterSpecialtyArr: [],
+        filterGradeArr: [],
         // 弹出框的表单信息
         form: {
           college: '',
@@ -177,9 +204,16 @@
         return sums;
       },
       // 筛选学院
-      filterCollege(value, row, column) {
+      filterHandler(value, row, column) {
         const property = column['property'];
         return row[property] === value;
+      },
+      // 打开开设课程的弹框
+      setClassInfo() {
+        this.setClassInfoVisible = true;
+      },
+      changeClassDialogVisible() {
+        this.setClassInfoVisible = false;
       }
     }
   }

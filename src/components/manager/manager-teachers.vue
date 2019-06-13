@@ -2,16 +2,16 @@
   <el-container>
     <el-main>
       <el-table :data="teacherInfo">
-        <el-table-column prop="college" label="学院" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="name" label="姓名" width="120"></el-table-column>
-        <el-table-column prop="jobId" label="工号" width="140"></el-table-column>
-        <el-table-column prop="sex" label="性别" width="100"></el-table-column>
-        <el-table-column prop="education" label="学历" width="100"></el-table-column>
-        <el-table-column prop="graduation" label="毕业学校" width="150"></el-table-column>
-        <el-table-column prop="birthday" label="出生日期" width="140"></el-table-column>
-        <el-table-column prop="age" label="年龄" width="100"></el-table-column>
-        <el-table-column prop="idCard" label="身份证"></el-table-column>
-        <el-table-column prop="identity" label="权限" width="120"></el-table-column>
+        <el-table-column prop="college" label="学院" show-overflow-tooltip sortable></el-table-column>
+        <el-table-column prop="name" label="姓名" width="120" sortable></el-table-column>
+        <el-table-column prop="jobId" label="工号" width="140" sortable></el-table-column>
+        <el-table-column prop="sex" label="性别" width="100" sortable></el-table-column>
+        <el-table-column prop="education" label="学历" width="100" sortable></el-table-column>
+        <el-table-column prop="graduation" label="毕业学校" width="150" sortable></el-table-column>
+        <el-table-column prop="birthday" label="出生日期" width="140" sortable></el-table-column>
+        <el-table-column prop="age" label="年龄" width="100" sortable></el-table-column>
+        <el-table-column prop="idCard" label="身份证" sortable></el-table-column>
+        <el-table-column prop="identity" label="权限" width="120" sortable></el-table-column>
         <el-table-column width="60">
           <template slot-scope="scope">
             <el-button type="mini" @click="editTeacherInfo(scope.row)">
@@ -46,7 +46,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="工号" label-width="50px" required :rules="rules.numberId" prop="jobId">
+            <el-form-item label="工号" label-width="50px" required :rules="rules.numberId" prop="jobId" sortable>
               <el-input placeholder="请输入教师工号" v-model="form.jobId" :disabled="editingDialog"></el-input>
             </el-form-item>
           </el-col>
@@ -92,7 +92,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="权限" label-width="50px" prop="identity" :rules="rules.empty" required>
+            <el-form-item label="权限" label-width="50px" prop="identity" :rules="rules.empty" required sortable>
               <el-radio-group v-model="form.identity">
                 <el-radio-button label="教务办主任">教务办主任</el-radio-button>
                 <el-radio-button label="普通教师">普通教师</el-radio-button>
@@ -255,17 +255,4 @@
   }
 </script>
 
-<style scoped>
-  .addIcon {
-    width: 40px;
-    height: 40px;
-    position: fixed;
-    right: 4vw;
-    bottom: 8vh;
-    border-radius: 50%;
-  }
-  .addIcon:hover {
-    transform: scale(1.2, 1.2) rotate(180deg);
-    transition: all linear .2s; 
-  }
-</style>
+<style scoped></style>

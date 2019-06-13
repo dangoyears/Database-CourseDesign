@@ -2,17 +2,17 @@
   <el-container>
     <el-main>
       <el-table :data="studentInfo">
-        <el-table-column prop="college" label="学院" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="specialty" label="专业" width="150" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="grade" label="年级" width="80"></el-table-column>
-        <el-table-column prop="class" label="班级" width="80"></el-table-column>
-        <el-table-column prop="name" label="姓名" width="110"></el-table-column>
-        <el-table-column prop="studentId" label="学号" width="120"></el-table-column>
-        <el-table-column prop="sex" label="性别" width="80"></el-table-column>
-        <el-table-column prop="status" label="状态" width="110"></el-table-column>
-        <el-table-column prop="birthday" label="出生日期" width="120"></el-table-column>
-        <el-table-column prop="age" label="年龄" width="80"></el-table-column>
-        <el-table-column prop="idCard" label="身份证"></el-table-column>
+        <el-table-column prop="college" label="学院" show-overflow-tooltip sortable></el-table-column>
+        <el-table-column prop="specialty" label="专业" width="150" show-overflow-tooltip sortable></el-table-column>
+        <el-table-column prop="grade" label="年级" width="80" sortable></el-table-column>
+        <el-table-column prop="class" label="班级" width="80" sortable></el-table-column>
+        <el-table-column prop="name" label="姓名" width="110" sortable></el-table-column>
+        <el-table-column prop="studentId" label="学号" width="120" sortable></el-table-column>
+        <el-table-column prop="sex" label="性别" width="80" sortable></el-table-column>
+        <el-table-column prop="status" label="状态" width="110" sortable></el-table-column>
+        <el-table-column prop="birthday" label="出生日期" width="120" sortable></el-table-column>
+        <el-table-column prop="age" label="年龄" width="80" sortable></el-table-column>
+        <el-table-column prop="idCard" label="身份证" sortable></el-table-column>
         <el-table-column width="60">
           <template slot-scope="scope">
             <el-button type="mini" @click="editStudentInfo(scope.row)">
@@ -266,17 +266,4 @@
   }
 </script>
 
-<style scoped>
-  .addIcon {
-    width: 40px;
-    height: 40px;
-    position: fixed;
-    right: 4vw;
-    bottom: 8vh;
-    border-radius: 50%;
-  }
-  .addIcon:hover {
-    transform: scale(1.2, 1.2) rotate(180deg);
-    transition: all linear .2s; 
-  }
-</style>
+<style scoped></style>
