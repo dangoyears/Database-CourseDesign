@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
 import login from '../components/login/login.vue'
-import manager from '../components/manager/manager.vue'
+import admin from '../components/admin/admin.vue'
+import teacher from '../components/teacher/teacher.vue'
 
 export default new Router({
   routes: [
@@ -16,9 +17,14 @@ export default new Router({
       component: login
     },
     {
-      name: 'manager',
-      path: '/manager',
-      component: manager
+      name: 'admin',
+      path: '/admin',
+      component: admin
+    },
+    {
+      name: 'teacher',
+      path: '/teacher',
+      component: teacher
     }
   ]
 })

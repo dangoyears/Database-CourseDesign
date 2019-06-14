@@ -50,6 +50,11 @@
         }
       },
       signIn() {
+        if(this.identity === "教师") {
+          this.$router.push({name: 'teacher'});
+          return;
+        }
+        
         if(this.form.user === "") {
           this.userPrompt = "用户ID不能为空";
           return;
@@ -77,7 +82,7 @@
             sessionStorage.setItem("DBcourse-login", JSON.stringify(obj));
             this.psdPrompt = "";
             this.$router.push({
-              name: 'manager',
+              name: typeData,
               params: {
                 userName: this.form.user,
                 token: data

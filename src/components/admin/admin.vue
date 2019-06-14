@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="manager-header">
+    <header class="admin-header">
       <el-menu mode="horizontal" @select="handleSelect" default-active="colleges">
         <el-menu-item index="colleges">学院信息</el-menu-item>
         <el-menu-item index="teachers">教师信息</el-menu-item>
@@ -19,9 +19,9 @@
 </template>
 
 <script>
-  import managerColleges from './manager-college'
-  import managerTeachers from './manager-teachers'
-  import managerStudents from './manager-students'
+  import adminColleges from './admin-college'
+  import adminTeachers from './admin-teachers'
+  import adminStudents from './admin-students'
   import api from '../../api/index'
 
   export default {
@@ -43,18 +43,18 @@
         collegeInfos: [],
         // 格式化后的数据
         formatCollegeInfos: {},
-        componentId: "manager-colleges"
+        componentId: "admin-colleges"
       }
     },
     components: {
-      'manager-colleges': managerColleges,
-      'manager-teachers': managerTeachers,
-      'manager-students': managerStudents
+      'admin-colleges': adminColleges,
+      'admin-teachers': adminTeachers,
+      'admin-students': adminStudents
     },
     methods: {
       handleSelect(key) {
         if(!key)  return;
-        this.componentId = `manager-${key}`;
+        this.componentId = `admin-${key}`;
       },
       switchUser() {
         this.$confirm('是否确定要切换账号？', '提醒', {
@@ -88,7 +88,7 @@
 </script>
 
 <style scoped lang="less">
-  .manager-header {
+  .admin-header {
     width: 100%;
     position: fixed;
     top: 0;

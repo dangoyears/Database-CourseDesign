@@ -15,7 +15,7 @@
         </el-submenu>
       </el-menu>
       <el-menu>
-        <el-menu-item class="manager-add" @click="openCollegeInfo"><i class="el-icon-circle-plus-outline"></i></el-menu-item>
+        <el-menu-item class="admin-add" @click="openCollegeInfo"><i class="el-icon-circle-plus-outline"></i></el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -225,10 +225,10 @@
     height: calc(100vh - 60px);
     overflow: hidden;
   }
-  .manager-add:hover {
+  .admin-add:hover {
     background-color: #eee;
   }
-  .manager-add {
+  .admin-add {
     text-align: center;
   }
   .labelStyle {
