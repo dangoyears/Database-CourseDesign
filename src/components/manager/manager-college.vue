@@ -70,6 +70,7 @@
     <img src="../../assets/add.png" class="addIcon" @click="setClassInfo">
     <class-dialog 
       :dialogVisible="setClassInfoVisible"
+      :collegeInfos="collegeInfos"
       v-on:update:dialogVisible="changeClassDialogVisible"
       ></class-dialog>
   </el-container>
@@ -114,7 +115,7 @@
     },
     data() {
       return {
-        setClassInfoVisible: true,
+        setClassInfoVisible: false,
         dialogVisible: false,
         rules: rules,
         search: '',
