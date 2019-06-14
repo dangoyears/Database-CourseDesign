@@ -3,13 +3,13 @@
     <el-form :model="form" inline>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="课程名称" required>
+          <el-form-item label="课程名称" required prop="name" :rules="rules.userName">
             <el-input placeholder="课程名称" v-model="form.name"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="学分" required>
-            <el-select v-model="form.credit" placeholder="课程的学分">
+            <el-select v-model="form.credit" placeholder="课程的学分" prop="credit" :rules="rules.empty">
               <el-option label="1" value="1"></el-option>
               <el-option label="2" value="2"></el-option>
               <el-option label="3" value="3"></el-option>
@@ -19,8 +19,27 @@
         </el-col>
       </el-row>
       <el-row>
+        <el-col :span="12">
+          <el-form-item label="课程性质" required prop="nature" :rules="rules.empty">
+            <el-select v-model="form.nature" placeholder="课程的性质">
+              <el-option value="专业必修课"></el-option>
+              <el-option value="专业选修课"></el-option>
+              <el-option value="通识课"></el-option>
+              <el-option value="实验课"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="任课教师" required prop="teacher" :rules="rules.empty">
+            <el-select v-model="form.teacher" placeholder="请选择任课教师">
+              <el-option value="xxx"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="6">
-          <el-form-item>
+          <el-form-item prop="weekStart" :rules="rules.empty">
           <el-col :span="8">课程时间</el-col>
           <el-col :span="16">
             <el-select v-model="form.weekStart" placeholder="第几周">
@@ -31,7 +50,7 @@
         </el-col>
         <el-col :span="1" style="transform: translate(18%, 10px)">—</el-col>
         <el-col :span="4">
-          <el-form-item>
+          <el-form-item prop="weekEnd" :rules="rules.empty">
             <el-select v-model="form.weekEnd" placeholder="第几周">
               <el-option v-for="val in 16" :key="val" :label="val" :value="val" :disabled="val < form.weekStart"></el-option>
             </el-select>
@@ -39,7 +58,7 @@
         </el-col>
         <el-col :span="1" style="transform: translate(30%, 10px)">|</el-col>    
         <el-col :span="4">
-          <el-form-item>
+          <el-form-item prop="sectionStart" :rules="rules.empty">
             <el-select v-model="form.sectionStart" placeholder="第几节">
               <el-option v-for="val in 11" :key="val" :label="val" :value="val"></el-option>
             </el-select>
@@ -47,7 +66,7 @@
         </el-col>
         <el-col :span="1" style="transform: translate(18%, 10px);">—</el-col>
         <el-col :span="4">
-          <el-form-item>
+          <el-form-item prop="sectionEnd" :rules="rules.empty">
             <el-select v-model="form.sectionEnd" placeholder="第几节">
               <el-option v-for="val in 11" :key="val" :label="val" :value="val" :disabled="val < form.sectionStart"></el-option>
             </el-select>
@@ -56,32 +75,22 @@
       </el-row>
       <el-row>
         <el-col :span="12">
-          <el-form-item label="上课地点" required>
+          <el-form-item label="上课地点" required prop="address" :rules="rules.empty">
             <el-cascader
               v-model="form.address"
               :options="addressOptions"
-              :props="{expandTrigger: 'hover', value: 'value', label: 'label', children: 'children'}"
+              :props="{expandTrigger: 'hover'}"
               separator=""
             ></el-cascader>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="容纳人数" required>
+          <el-form-item label="容纳人数" required prop="accommodate" :rules="accommodateRule">
             <el-input v-model="form.accommodate" placeholder="课程最大可容纳人数"></el-input>
           </el-form-item>
         </el-col>
       </el-row >
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="课程性质" required>
-            <el-select v-model="form.nature" placeholder="课程的性质">
-              <el-option value="专业必修课"></el-option>
-              <el-option value="专业选修课"></el-option>
-              <el-option value="通识课"></el-option>
-              <el-option value="实验课"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
         <el-col :span="12">
           <el-form-item label="学院" required>
             <el-select v-model="form.college" placeholder="要开设课程的学院">
@@ -90,8 +99,6 @@
             </el-select>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row>
         <el-col :span="12">
           <el-form-item label="专业" required>
             <el-select v-model="form.specialty" aria-placeholder="要开设课程的专业">
@@ -100,6 +107,8 @@
             </el-select>
           </el-form-item>
         </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="12">
           <el-form-item label="班级" required>
             <el-select v-model="form.class" placeholder="要开设课程的班级">
@@ -128,10 +137,8 @@
 
 <script>
   import data from '../../base/data'
+  import rules from '../../base/rules'
   export default {
-    created() {
-      console.log(data.addressOptions);
-    },
     props: {
       dialogVisible:  {
         type: Boolean,
@@ -155,212 +162,56 @@
           specialty: '',
           class: '',
           nature: '',
+          teacher: '',
           accommodate: '',
-          address: []
+          address: ''
         },
         // 上课地点的级联信息
-        addressOptions: data.addressOptions
-        // addressOptions: [{
-        //   value: 'zhinan',
-        //   label: '指南',
-        //   children: [{
-        //     value: 'shejiyuanze',
-        //     label: '设计原则',
-        //     children: [{
-        //       value: 'yizhi',
-        //       label: '一致'
-        //     }, {
-        //       value: 'fankui',
-        //       label: '反馈'
-        //     }, {
-        //       value: 'xiaolv',
-        //       label: '效率'
-        //     }, {
-        //       value: 'kekong',
-        //       label: '可控'
-        //     }]
-        //   }, {
-        //     value: 'daohang',
-        //     label: '导航',
-        //     children: [{
-        //       value: 'cexiangdaohang',
-        //       label: '侧向导航'
-        //     }, {
-        //       value: 'dingbudaohang',
-        //       label: '顶部导航'
-        //     }]
-        //   }]
-        // }, {
-        //   value: 'zujian',
-        //   label: '组件',
-        //   children: [{
-        //     value: 'basic',
-        //     label: 'Basic',
-        //     children: [{
-        //       value: 'layout',
-        //       label: 'Layout 布局'
-        //     }, {
-        //       value: 'color',
-        //       label: 'Color 色彩'
-        //     }, {
-        //       value: 'typography',
-        //       label: 'Typography 字体'
-        //     }, {
-        //       value: 'icon',
-        //       label: 'Icon 图标'
-        //     }, {
-        //       value: 'button',
-        //       label: 'Button 按钮'
-        //     }]
-        //   }, {
-        //     value: 'form',
-        //     label: 'Form',
-        //     children: [{
-        //       value: 'radio',
-        //       label: 'Radio 单选框'
-        //     }, {
-        //       value: 'checkbox',
-        //       label: 'Checkbox 多选框'
-        //     }, {
-        //       value: 'input',
-        //       label: 'Input 输入框'
-        //     }, {
-        //       value: 'input-number',
-        //       label: 'InputNumber 计数器'
-        //     }, {
-        //       value: 'select',
-        //       label: 'Select 选择器'
-        //     }, {
-        //       value: 'cascader',
-        //       label: 'Cascader 级联选择器'
-        //     }, {
-        //       value: 'switch',
-        //       label: 'Switch 开关'
-        //     }, {
-        //       value: 'slider',
-        //       label: 'Slider 滑块'
-        //     }, {
-        //       value: 'time-picker',
-        //       label: 'TimePicker 时间选择器'
-        //     }, {
-        //       value: 'date-picker',
-        //       label: 'DatePicker 日期选择器'
-        //     }, {
-        //       value: 'datetime-picker',
-        //       label: 'DateTimePicker 日期时间选择器'
-        //     }, {
-        //       value: 'upload',
-        //       label: 'Upload 上传'
-        //     }, {
-        //       value: 'rate',
-        //       label: 'Rate 评分'
-        //     }, {
-        //       value: 'form',
-        //       label: 'Form 表单'
-        //     }]
-        //   }, {
-        //     value: 'data',
-        //     label: 'Data',
-        //     children: [{
-        //       value: 'table',
-        //       label: 'Table 表格'
-        //     }, {
-        //       value: 'tag',
-        //       label: 'Tag 标签'
-        //     }, {
-        //       value: 'progress',
-        //       label: 'Progress 进度条'
-        //     }, {
-        //       value: 'tree',
-        //       label: 'Tree 树形控件'
-        //     }, {
-        //       value: 'pagination',
-        //       label: 'Pagination 分页'
-        //     }, {
-        //       value: 'badge',
-        //       label: 'Badge 标记'
-        //     }]
-        //   }, {
-        //     value: 'notice',
-        //     label: 'Notice',
-        //     children: [{
-        //       value: 'alert',
-        //       label: 'Alert 警告'
-        //     }, {
-        //       value: 'loading',
-        //       label: 'Loading 加载'
-        //     }, {
-        //       value: 'message',
-        //       label: 'Message 消息提示'
-        //     }, {
-        //       value: 'message-box',
-        //       label: 'MessageBox 弹框'
-        //     }, {
-        //       value: 'notification',
-        //       label: 'Notification 通知'
-        //     }]
-        //   }, {
-        //     value: 'navigation',
-        //     label: 'Navigation',
-        //     children: [{
-        //       value: 'menu',
-        //       label: 'NavMenu 导航菜单'
-        //     }, {
-        //       value: 'tabs',
-        //       label: 'Tabs 标签页'
-        //     }, {
-        //       value: 'breadcrumb',
-        //       label: 'Breadcrumb 面包屑'
-        //     }, {
-        //       value: 'dropdown',
-        //       label: 'Dropdown 下拉菜单'
-        //     }, {
-        //       value: 'steps',
-        //       label: 'Steps 步骤条'
-        //     }]
-        //   }, {
-        //     value: 'others',
-        //     label: 'Others',
-        //     children: [{
-        //       value: 'dialog',
-        //       label: 'Dialog 对话框'
-        //     }, {
-        //       value: 'tooltip',
-        //       label: 'Tooltip 文字提示'
-        //     }, {
-        //       value: 'popover',
-        //       label: 'Popover 弹出框'
-        //     }, {
-        //       value: 'card',
-        //       label: 'Card 卡片'
-        //     }, {
-        //       value: 'carousel',
-        //       label: 'Carousel 走马灯'
-        //     }, {
-        //       value: 'collapse',
-        //       label: 'Collapse 折叠面板'
-        //     }]
-        //   }]
-        // }, {
-        //   value: 'ziyuan',
-        //   label: '资源',
-        //   children: [{
-        //     value: 'axure',
-        //     label: 'Axure Components'
-        //   }, {
-        //     value: 'sketch',
-        //     label: 'Sketch Templates'
-        //   }, {
-        //     value: 'jiaohu',
-        //     label: '组件交互文档'
-        //   }]
-        // }]
+        addressOptions: data.addressOptions,
+        rules: rules,
+        accommodateRule: [
+          {
+            required: true,
+            message: '输入不能为空',
+            trigger: ['blur', 'change']
+          },
+          {
+            pattern: /[0-9]/,
+            message: '输入要求是数字',
+            trigger: ['blur', 'change']
+          },
+          {
+            validator: function(rule, value, callback) {
+              if(value >=1 && value <= 200)  callback();
+              else  callback(new Error("可容纳人数的范围在1-200之间"));
+            },
+            trigger: ['blur', 'change']
+          }
+        ]  
       }
     },
     methods: {
-     submitClassInfos() {
-      console.log(this.form);
-     }
+      // 提交表单信息
+      submitClassInfos() {
+        this.formattingAddress();
+        console.log(this.form);
+        console.log(this.form.address);
+      },
+      // 格式化上课地点
+      // 原本格式为："理科南教学楼", "理科南教学楼+6", "理科南教学楼+6+06"
+      formattingAddress(arr) {
+        let str = "";
+        this.form.address.forEach((val, index) => {
+          if(index === 0)  str += val;
+          else if(index === 1) {
+            str += val.replace(/^[\u4e00-\u9fa5]+\+/g, '');
+          }
+          else if(index === 2) { 
+            str += val.replace(/^[\u4e00-\u9fa5]+\+[0-9]+\+/g, '');
+          }
+        })
+        this.form.address = str;
+      }
     },
     computed: {
       // 集成所有的学院
@@ -383,14 +234,9 @@
           if(val.specialty === this.form.specialty)  return val.grade + val.class;
         })
         return Array.from(new Set(arr.filter(val => val)));
-      },
+      }
     }
   }
 </script>
 
-<style scoped>
-  .test {
-    width: 20%;
-    display: inline-block;
-  }
-</style>
+<style scoped></style>

@@ -1,22 +1,20 @@
 // 返回一个 1-7 楼，每楼有 03-22 教室的数组
 function getOptions(val) {
-  let arr = [];
+  let res = [];
   for(let i=1; i<=7; i++) {
     let floor = Object.create(null);
-    floor.value = i;
+    floor.value = val + "+" + i;
     floor.label = i;
     floor.children = [];
     for(let j=3; j<=22; j++) {
-      let obj = {};
-      // obj.value = j < 10 ? `0${j}${val}` : `${j}${val}`;
-      // obj.label = j < 10 ? `0${j}${val}` : `${j}${val}`;
-      obj.value = j < 10 ? `0${j}` : `${j}`;
+      let obj = Object.create(null);
+      obj.value = j < 10 ? `${val}+${i}+0${j}` : `${val}+${i}+${j}`;
       obj.label = j < 10 ? `0${j}` : `${j}`;
       floor.children.push(obj);
     }
-    arr.push(floor);
+    res.push(floor);
   }
-  return arr;
+  return res;
 }
 
 export default {
@@ -41,30 +39,30 @@ export default {
       label: '文逸楼',
       children: getOptions('文逸楼')
     },
-    // {
-    //   value: '理科南教学楼',
-    //   label: '理科南教学楼',
-    //   children: getOptions()
-    // },
-    // {
-    //   value: '理科北教学楼',
-    //   label: '理科北教学楼',
-    //   children: getOptions()
-    // },
-    // {
-    //   value: '电子信息楼',
-    //   label: '电子信息楼',
-    //   children: getOptions()
-    // },
-    // {
-    //   value: '理学实验楼',
-    //   label: '理学实验楼',
-    //   children: getOptions()
-    // },
-    // {
-    //   value: '计算机实验楼',
-    //   label: '计算机实验楼',
-    //   children: getOptions()
-    // }
+    {
+      value: '理科南教学楼',
+      label: '理科南教学楼',
+      children: getOptions('理科南教学楼')
+    },
+    {
+      value: '理科北教学楼',
+      label: '理科北教学楼',
+      children: getOptions('理科北教学楼')
+    },
+    {
+      value: '电子信息楼',
+      label: '电子信息楼',
+      children: getOptions('电子信息楼')
+    },
+    {
+      value: '理学实验楼',
+      label: '理学实验楼',
+      children: getOptions('理学实验楼')
+    },
+    {
+      value: '计算机实验楼',
+      label: '计算机实验楼',
+      children: getOptions('计算机实验楼')
+    }
   ]
 }
