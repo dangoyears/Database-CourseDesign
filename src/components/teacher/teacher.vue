@@ -37,11 +37,31 @@
       </tr>
       <div class="portrait"></div>
     </table>
+    <img src="../../assets/add.png" class="addIcon" @click="createClassInfos">
+    <class-dialog 
+      :dialogVisible="setClassInfoVisible"
+      :collegeInfos="collegeInfos"
+      v-on:update:dialogVisible="changeClassDialogVisible"
+    ></class-dialog>
   </div>
+
 </template>
 
 <script>
+  import api from '../../api/index'
+  import classDialog from '../base/setClassDialog'
+
   export default {
+    mounted() {
+      api.getCollegeInfo((response) => {
+        console.log(response);
+        // this.collegeInfos = response.slice(0);
+      });
+      console.log(this.collegeInfos);
+    },
+    components: {
+      'class-dialog': classDialog
+    },
     data() {
       return {
         teacherInfo: {
@@ -55,11 +75,18 @@
           "age": "21",
           "idCard": "440582199708310612",
           "position": "教务办主任"
-        }    
+        },
+        setClassInfoVisible: false,
+        collegeInfos: []
       }
     },
     methods: {
-    
+      createClassInfos() {
+        this.setClassInfoVisible = true;
+      },
+      changeClassDialogVisible() {
+        this.setClassInfoVisible = false;
+      }
     },
     computed: {
     }
@@ -80,7 +107,7 @@
     height: 40px;
     line-height: 40px;
     padding: 10px;
-    background-color: rgb(227, 230, 220); 
+    background-color: rgb(242, 245, 237); 
   }
   .teacher-label {
     font-size: 0.85rem;
@@ -108,5 +135,17 @@
     background-color: #EFF3F6;
     color: #393C3E;
     width: 20%;
+  }
+  .addIcon {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    right: 4vw;
+    bottom: 8vh;
+    border-radius: 50%;
+  }
+  .addIcon:hover {
+    transform: scale(1.2, 1.2) rotate(180deg);
+    transition: all linear .2s; 
   }
 </style>

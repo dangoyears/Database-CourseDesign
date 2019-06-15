@@ -71,6 +71,7 @@
     <class-dialog 
       :dialogVisible="setClassInfoVisible"
       :collegeInfos="collegeInfos"
+      :formatCollegeInfos="formatCollegeInfos"
       v-on:update:dialogVisible="changeClassDialogVisible"
       ></class-dialog>
   </el-container>

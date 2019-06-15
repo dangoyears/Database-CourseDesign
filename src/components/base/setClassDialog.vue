@@ -91,42 +91,20 @@
         </el-col>
       </el-row >
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="学院" required>
-            <el-select v-model="form.college" placeholder="要开设课程的学院">
-              <el-option value="无限制"></el-option>
-              <el-option v-for="key in collegeArr" :key="key" :value="key"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="专业" required>
-            <el-select v-model="form.specialty" aria-placeholder="要开设课程的专业">
-              <el-option value="无限制"></el-option>
-              <el-option v-for="key in specialtyArr" :key="key" :value="key"></el-option>
-            </el-select>
+        <el-col :span="24">
+          <el-form-item label="上课班级">
+            <el-cascader
+              v-model="tempClass"
+              :props="{expandTrigger: 'hover', multiple: 'true'}"
+              :options="classOptions"
+              separator=""
+              clearable
+              :show-all-levels="false"
+              @change="classHandler"
+            ></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="班级" required>
-            <el-select v-model="form.class" placeholder="要开设课程的班级">
-              <el-option value="无限制"></el-option>
-              <el-option v-for="key in classArr" :key="key" :value="key"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-     
-      <!-- <el-row>
-        <el-col :span="12">
-
-        </el-col>
-        <el-col :span="12">
-          
-        </el-col>
-      </el-row > -->
     </el-form>
     <div slot="footer">
       <el-button @click="dialogVisible=false">取消</el-button>
@@ -139,6 +117,9 @@
   import data from '../../base/data'
   import rules from '../../base/rules'
   export default {
+    mounted() {
+      this.getClassOptions();
+    },
     props: {
       dialogVisible:  {
         type: Boolean,
@@ -147,6 +128,10 @@
       collegeInfos: {
         type: Array,
         required: true,
+      },
+      formatCollegeInfos: {
+        type: Object,
+        require: true
       }
     },
     data() {
@@ -158,14 +143,13 @@
           weekEnd: '',
           sectionStart: '',
           sectionEnd: '',
-          college: '',
-          specialty: '',
-          class: '',
+          class: [],
           nature: '',
           teacher: '',
           accommodate: '',
           address: ''
         },
+        tempClass: [],
         // 上课地点的级联信息
         addressOptions: data.addressOptions,
         rules: rules,
@@ -187,7 +171,8 @@
             },
             trigger: ['blur', 'change']
           }
-        ]  
+        ],
+        classOptions: []
       }
     },
     methods: {
@@ -211,29 +196,36 @@
           }
         })
         this.form.address = str;
-      }
-    },
-    computed: {
-      // 集成所有的学院
-      collegeArr() {
-        let arr = this.collegeInfos.map(val => {
-          return val.college;
-        })
-        return Array.from(new Set(arr));
       },
-      // 根据所选的学院集成它所包含的专业
-      specialtyArr() {
-        let arr = this.collegeInfos.map(val => {
-          if(val.college === this.form.college)  return val.specialty;
-        })
-        return Array.from(new Set(arr.filter(val => val)));
+      // 级联学院专业班级
+      getClassOptions() {
+        setTimeout(() => {
+          for(let key in this.formatCollegeInfos) {
+            let college = this.formatCollegeInfos[key];
+            let collegeOption = {
+              value: key,
+              label: key,
+              children: []
+            };
+            for(let key1 in college) {
+              for(let i=0, len=college[key1].length; i<len; i++) {
+                let classes = {
+                  value: `${key1}-${college[key1][i]}`,
+                  label: `${key1}${college[key1][i]}`
+                };
+                collegeOption.children.push(classes);
+              }
+            }
+            this.classOptions.push(collegeOption);
+          }
+        }, 1000)
       },
-      // 根据所选的专业集成它所包含的班级
-      classArr() {
-        let arr = this.collegeInfos.map(val => {
-          if(val.specialty === this.form.specialty)  return val.grade + val.class;
+      // 将未格式化的tempClass格式化后存进form.class里，便于向后端传送参数
+      classHandler(value) {
+        this.form.class = [];
+        value.forEach((val, index) => {
+          this.form.class[index] = val[0] + "-" + val[1];
         })
-        return Array.from(new Set(arr.filter(val => val)));
       }
     }
   }
