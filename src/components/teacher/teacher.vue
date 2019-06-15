@@ -1,27 +1,42 @@
 <template>
-  <div>
-    <el-row>
-      <el-col :span="16">
-        <el-table :data="teacherInfo">
-          <el-table-column label="姓名" prop="name"></el-table-column>
-          <el-table-column label="所属学院" prop="college"></el-table-column>
-        </el-table>
-      </el-col>
-      <el-col>
-        <div class="portrait"></div>
-      </el-col>
-      <!-- <el-table :data="teacherInfo"> -->
-       <!-- <el-table-column label="工号" prop="jobId"></el-table-column>
-        <el-table-column label="性别" prop="sex"></el-table-column>
-         <el-table-column label="学历" prop="education"></el-table-column>
-        <el-table-column label="毕业学校" prop="graduation"></el-table-column>
-        <el-table-column label="出生日期" prop="birthday"></el-table-column>
-        <el-table-column label="年龄" prop="age"></el-table-column>
-        <el-table-column label="身份证" prop="idCard"></el-table-column>
-        <el-table-column label="状态" prop="position"></el-table-column> -->
-
-      <!-- </el-table> -->
-    </el-row>
+  <div class="container">
+    <p class="teacher-header">
+      <label class="teacher-label">教师个人信息：</label>
+      <label class="teacher-name">{{teacherInfo.name}}</label>
+    </p>
+    <table class="teacher-table">
+      <tr>
+        <td class="column">姓名</td>
+        <td>{{teacherInfo.name}}</td>
+        <td class="column">性别</td>
+        <td>{{teacherInfo.sex}}</td>
+      </tr>
+      <tr>
+        <td class="column">所属学院</td>
+        <td>{{teacherInfo.college}}</td>
+        <td class="column">工号</td>
+        <td>{{teacherInfo.jobId}}</td>
+      </tr>
+      <tr>
+        <td class="column">学历</td>
+        <td>{{teacherInfo.education}}</td>
+        <td class="column">毕业学校</td>
+        <td>{{teacherInfo.graduation}}</td>
+      </tr>
+      <tr>
+        <td class="column">出生日期</td>
+        <td>{{teacherInfo.birthday}}</td>
+        <td class="column">年龄</td>
+        <td>{{teacherInfo.age}}</td>
+      </tr>
+      <tr>
+        <td class="column">身份证</td>
+        <td>{{teacherInfo.idCard}}</td>
+        <td class="column">状态</td>
+        <td>{{teacherInfo.position}}</td>
+      </tr>
+      <div class="portrait"></div>
+    </table>
   </div>
 </template>
 
@@ -29,35 +44,69 @@
   export default {
     data() {
       return {
-        teacherInfo: [
-          {
-            "college": "计算机科学与网络工程学院",
-            "name": "夏侯瑾轩",
-            "jobId": "1706300032",
-            "sex": "男",
-            "education": '硕士',
-            "graduation": '南开大学',
-            "birthday": "1998-09-06",
-            "age": "21",
-            "idCard": "440582199708310612",
-            "position": "教务办主任"
-          }
-        ]
+        teacherInfo: {
+          "college": "计算机科学与网络工程学院",
+          "name": "夏侯瑾轩",
+          "jobId": "1706300032",
+          "sex": "男",
+          "education": '硕士',
+          "graduation": '南开大学',
+          "birthday": "1998-09-06",
+          "age": "21",
+          "idCard": "440582199708310612",
+          "position": "教务办主任"
+        }    
       }
     },
     methods: {
     
     },
     computed: {
-    
     }
   }
 </script>
 
 <style scoped>
   .portrait {
-    border: 1px solid red;
-    width: 150px;
-    height: 100%;
+    width: 200px;
+    height: 245px; 
+    background: #eee url('../../assets/user3.png') no-repeat center 120%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-top: 60px;
+  }
+  .teacher-header {
+    height: 40px;
+    line-height: 40px;
+    padding: 10px;
+    background-color: rgb(227, 230, 220); 
+  }
+  .teacher-label {
+    font-size: 0.85rem;
+  }
+  .teacher-name {
+    font-size: 1.2rem;
+    color: #71787E;
+  }
+  .teacher-table tr td {
+    border:1px solid #E6EAEE;
+  }
+  .teacher-table {
+    width: calc(100% - 200px);
+    font-size: 0.9rem; 
+    color: #71787E;
+  }
+  tr td {
+    height: 0;
+    line-height: 45px; 
+    box-sizing: border-box; 
+    padding: 0 10px; 
+    width: 30%;
+  }
+  .column {
+    background-color: #EFF3F6;
+    color: #393C3E;
+    width: 20%;
   }
 </style>
