@@ -15,6 +15,11 @@ export default {
   // 上传学院信息
   uploadCollegeInfo(obj) {
     axios.post(`https://dbcd.qfstudio.net/write/college?token=${obj.token}`, obj)
+    .then(function(response) {
+      console.log(obj);
+      console.log("response:");
+      console.log(response);
+    })
     .catch(function(error) {
       alert(error);
     })

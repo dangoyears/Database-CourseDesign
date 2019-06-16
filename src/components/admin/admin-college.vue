@@ -155,6 +155,9 @@
           return;
         }
         api.uploadCollegeInfo(this.form);
+        // 把新创建的班级信息及时显示出来
+        let temp = Object.assign(this.form, {sum: 0});
+        this.collegeInfos.push(temp);
         this.dialogVisible = false;
         this.$message({
           message: '信息创建成功',

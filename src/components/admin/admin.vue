@@ -14,7 +14,7 @@
       </el-menu>
     </header>
     <component :is="componentId" style="margin-top: 60px;" 
-    :collegeInfos="collegeInfos" :formatCollegeInfos="formatCollegeInfos" :token="token"></component>
+    :collegeInfos.sync="collegeInfos" :formatCollegeInfos="formatCollegeInfos" :token="token"></component>
   </div>
 </template>
 
