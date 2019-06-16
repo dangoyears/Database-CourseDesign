@@ -30,10 +30,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="任课教师" required prop="teacher" :rules="rules.empty">
-            <el-select v-model="form.teacher" placeholder="请选择任课教师">
-              <el-option value="xxx"></el-option>
-            </el-select>
+          <el-form-item label="容纳人数" required prop="accommodate" :rules="accommodateRule">
+            <el-input v-model="form.accommodate" placeholder="课程最大可容纳人数"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -85,13 +83,6 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="容纳人数" required prop="accommodate" :rules="accommodateRule">
-            <el-input v-model="form.accommodate" placeholder="课程最大可容纳人数"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row >
-      <el-row>
-        <el-col :span="24">
           <el-form-item label="上课班级">
             <el-cascader
               v-model="tempClass"
@@ -104,7 +95,27 @@
             ></el-cascader>
           </el-form-item>
         </el-col>
+      </el-row >
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="任课教师" required prop="teachers" :rules="rules.empty">
+            <el-select v-model="form.teachers" placeholder="请选择任课教师" multiple clearable @change="teachersHandler">
+              <el-option value="aaa"></el-option>
+              <el-option value="bbb"></el-option>
+              <el-option value="ccc"></el-option>
+              <el-option value="ddd"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="课程组长">
+            <el-select v-model="form.courseLeader" placeholder="请选择课程组长" :disabled="form.teachers.length<2">
+              <el-option v-for="val in form.teachers" :key="val" :value="val"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
       </el-row>
+      
     </el-form>
     <div slot="footer">
       <el-button @click="dialogVisible=false">取消</el-button>
@@ -145,7 +156,8 @@
           sectionEnd: '',
           class: [],
           nature: '',
-          teacher: '',
+          teachers: [],
+          courseLeader: '',
           accommodate: '',
           address: ''
         },
@@ -180,7 +192,6 @@
       submitClassInfos() {
         this.formattingAddress();
         console.log(this.form);
-        console.log(this.form.address);
       },
       // 格式化上课地点
       // 原本格式为："理科南教学楼", "理科南教学楼+6", "理科南教学楼+6+06"
@@ -226,6 +237,10 @@
         value.forEach((val, index) => {
           this.form.class[index] = val[0] + "-" + val[1];
         })
+      },
+      // 任课教师从多名降到一名时把课程组长清空，避免还保留着先前的值
+      teachersHandler(val) {
+        if(val.length < 2)  this.form.courseLeader = '';
       }
     }
   }
