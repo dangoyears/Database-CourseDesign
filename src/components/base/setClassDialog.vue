@@ -19,6 +19,7 @@
         </el-col>
       </el-row>
       <el-row>
+      <el-row>
         <el-col :span="12">
           <el-form-item label="课程性质" required prop="nature" :rules="rules.empty">
             <el-select v-model="form.nature" placeholder="课程的性质">
@@ -30,8 +31,51 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="容纳人数" required prop="accommodate" :rules="accommodateRule">
+          <el-form-item label="上课地点" required prop="address" :rules="rules.empty">
+            <el-cascader
+              v-model="form.address"
+              :options="addressOptions"
+              :props="{expandTrigger: 'hover'}"
+              separator=""
+            ></el-cascader>
+          </el-form-item>
+        </el-col>
+      </el-row >
+        <el-col :span="12">
+          <el-form-item label="上课班级">
+            <el-cascader
+              v-model="tempClass"
+              :props="{expandTrigger: 'hover', multiple: 'true'}"
+              :options="classOptions"
+              separator=""
+              clearable
+              :show-all-levels="false"
+              @change="classHandler"
+            ></el-cascader>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="容纳人数" prop="accommodate" :rules="accommodateRule">
             <el-input v-model="form.accommodate" placeholder="课程最大可容纳人数"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="任课教师" required prop="teachers" :rules="rules.empty">
+            <el-select v-model="form.teachers" placeholder="请选择任课教师" multiple clearable @change="teachersHandler">
+              <el-option value="aaa"></el-option>
+              <el-option value="bbb"></el-option>
+              <el-option value="ccc"></el-option>
+              <el-option value="ddd"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="课程组长">
+            <el-select v-model="form.courseLeader" placeholder="请选择课程组长" :disabled="form.teachers.length<2">
+              <el-option v-for="val in form.teachers" :key="val" :value="val"></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row>
@@ -71,51 +115,6 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="上课地点" required prop="address" :rules="rules.empty">
-            <el-cascader
-              v-model="form.address"
-              :options="addressOptions"
-              :props="{expandTrigger: 'hover'}"
-              separator=""
-            ></el-cascader>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="上课班级">
-            <el-cascader
-              v-model="tempClass"
-              :props="{expandTrigger: 'hover', multiple: 'true'}"
-              :options="classOptions"
-              separator=""
-              clearable
-              :show-all-levels="false"
-              @change="classHandler"
-            ></el-cascader>
-          </el-form-item>
-        </el-col>
-      </el-row >
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="任课教师" required prop="teachers" :rules="rules.empty">
-            <el-select v-model="form.teachers" placeholder="请选择任课教师" multiple clearable @change="teachersHandler">
-              <el-option value="aaa"></el-option>
-              <el-option value="bbb"></el-option>
-              <el-option value="ccc"></el-option>
-              <el-option value="ddd"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="课程组长">
-            <el-select v-model="form.courseLeader" placeholder="请选择课程组长" :disabled="form.teachers.length<2">
-              <el-option v-for="val in form.teachers" :key="val" :value="val"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      
     </el-form>
     <div slot="footer">
       <el-button @click="dialogVisible=false">取消</el-button>
@@ -160,6 +159,7 @@
           teachers: [],
           courseLeader: '',
           accommodate: '',
+          selectedSum: '',
           address: ''
         },
         tempClass: [],
@@ -193,6 +193,8 @@
       submitClassInfos() {
         this.formattingAddress();
         this.formattingTime();
+        this.computedSum();
+        // this.form.selectedSum = 0;
         console.log(this.form);
       },
       // 格式化上课地点
@@ -247,6 +249,27 @@
       // 任课教师从多名降到一名时把课程组长清空，避免还保留着先前的值
       teachersHandler(val) {
         if(val.length < 2)  this.form.courseLeader = '';
+      },
+      // 计算选中班级的总人数
+      computedSum() {
+        if(this.form.class.length === 0)  {
+          this.form.selectedSum = this.form.accommodate;
+          return;
+        }
+        this.form.class.forEach(val => {
+          let s = 0;
+          let arr = val.split('-');
+          // 找到对应班级的人数
+          for(let i=0, len=this.collegeInfos.length; i<len; i++) {
+            if(this.collegeInfos[i].college === arr[0] && this.collegeInfos[i].specialty === arr[1]) {
+              if(this.collegeInfos[i].grade + this.collegeInfos[i].class === arr[2]) {
+                s += this.collegeInfos[i].sum;
+              }
+            }
+          }
+          this.form.accommodate = s + "";
+          this.form.selectedSum = s + "";
+        })
       }
     }
   }

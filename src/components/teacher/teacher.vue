@@ -38,6 +38,7 @@
       <div class="portrait"></div>
     </table>
     <img src="../../assets/add.png" class="addIcon" @click="createClassInfos">
+    <teacher-course></teacher-course>
     <class-dialog 
       :dialogVisible="setClassInfoVisible"
       :collegeInfos="collegeInfos"
@@ -50,10 +51,12 @@
 <script>
   import api from '../../api/index'
   import classDialog from '../base/setClassDialog'
+  import teacherCourse from './teacher-course'
 
   export default {
     components: {
-      'class-dialog': classDialog
+      'class-dialog': classDialog,
+      'teacher-course': teacherCourse
     },
     data() {
       return {
