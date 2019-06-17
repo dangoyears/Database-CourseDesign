@@ -4,6 +4,7 @@ Vue.use(Router)
 import login from '../components/login/login.vue'
 import admin from '../components/admin/admin.vue'
 import teacher from '../components/teacher/teacher.vue'
+import student from '../components/student/student.vue'
 
 export default new Router({
   routes: [
@@ -25,6 +26,11 @@ export default new Router({
       name: 'teacher',
       path: '/teacher',
       component: teacher
+    },
+    {
+      name: 'student',
+      path: '/student',
+      component: student
     }
   ]
 })

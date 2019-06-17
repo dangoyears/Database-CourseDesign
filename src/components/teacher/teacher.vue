@@ -52,13 +52,6 @@
   import classDialog from '../base/setClassDialog'
 
   export default {
-    mounted() {
-      api.getCollegeInfo((response) => {
-        console.log(response);
-        // this.collegeInfos = response.slice(0);
-      });
-      console.log(this.collegeInfos);
-    },
     components: {
       'class-dialog': classDialog
     },

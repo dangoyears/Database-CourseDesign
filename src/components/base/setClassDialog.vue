@@ -154,6 +154,7 @@
           weekEnd: '',
           sectionStart: '',
           sectionEnd: '',
+          time: '',
           class: [],
           nature: '',
           teachers: [],
@@ -191,6 +192,7 @@
       // 提交表单信息
       submitClassInfos() {
         this.formattingAddress();
+        this.formattingTime();
         console.log(this.form);
       },
       // 格式化上课地点
@@ -207,6 +209,10 @@
           }
         })
         this.form.address = str;
+      },
+      // 格式化上课时间
+      formattingTime() {
+        this.form.time = `第${this.form.weekStart}-${this.form.weekEnd}周,第${this.form.sectionStart}-${this.form.sectionEnd}节`;
       },
       // 级联学院专业班级
       getClassOptions() {

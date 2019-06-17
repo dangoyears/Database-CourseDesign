@@ -54,7 +54,10 @@
           this.$router.push({name: 'teacher'});
           return;
         }
-        
+        if(this.identity === '学生') {
+          this.$router.push({name: 'student'});
+          return;
+        }
         if(this.form.user === "") {
           this.userPrompt = "用户ID不能为空";
           return;
