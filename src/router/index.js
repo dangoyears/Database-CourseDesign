@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
-import login from '../components/login/login.vue'
-import admin from '../components/admin/admin.vue'
-import teacher from '../components/teacher/teacher.vue'
-import student from '../components/student/student.vue'
+
+const login = () => import('../components/login/login.vue')
+const admin = () => import('../components/admin/admin.vue')
+const teacher = () => import('../components/teacher/teacher.vue')
+const student = () => import('../components/student/student.vue')
 
 export default new Router({
   routes: [

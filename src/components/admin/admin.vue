@@ -5,6 +5,7 @@
         <el-menu-item index="colleges">学院信息</el-menu-item>
         <el-menu-item index="teachers">教师信息</el-menu-item>
         <el-menu-item index="students">学生信息</el-menu-item>
+        <el-menu-item index="course">课程信息</el-menu-item>
         <el-menu-item class="user-tab">
           <span class="user">Hello, {{userName}}</span>
         </el-menu-item>
@@ -23,6 +24,7 @@
   import adminTeachers from './admin-teachers'
   import adminStudents from './admin-students'
   import api from '../../api/index'
+  import adminCourse from './admin-course'
 
   export default {
     // 获取学院信息
@@ -50,7 +52,8 @@
     components: {
       'admin-colleges': adminColleges,
       'admin-teachers': adminTeachers,
-      'admin-students': adminStudents
+      'admin-students': adminStudents,
+      'admin-course': adminCourse
     },
     methods: {
       handleSelect(key) {
