@@ -1,9 +1,13 @@
 <template>
   <div class="container">
-    <p class="student-header">
+    <header class="student-header">
       <label class="student-label">学生个人信息：</label>
       <label class="student-name">{{studentInfo.name}}</label>
-    </p>
+      <div  class="user-tab">
+        <span class="user-name">Hello, {{studentInfo.name}}</span>
+        <img src="../../assets/switch1.png" alt="切换账号" @click="switchUser">
+      </div>
+    </header>
     <table class="student-table">
       <tr>
         <td class="column">姓名</td>
@@ -87,7 +91,15 @@
       }
     },
     methods: {
-
+      switchUser() {
+        this.$confirm('是否确定要切换账号？', '提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$router.push({name: 'login'})
+        }).catch(() => {})
+      },
     }
   }
 </script>
@@ -96,7 +108,7 @@
   .portrait {
     width: 200px;
     height: 245px; 
-    background: #eee url('../../assets/user3.png') no-repeat center 120%;
+    background: #eee url('../../assets/student1.png') no-repeat center 120%;
     position: absolute;
     right: 0;
     top: 0;
@@ -134,5 +146,20 @@
     background-color: #EFF3F6;
     color: #393C3E;
     width: 20%;
+  }
+  .user-tab {
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    cursor: pointer;
+  }
+  .user-name {
+    background: url('../../assets/student.png') no-repeat;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 35px;
+    margin-right: 15px;
+    color: #71787E;
   }
 </style>

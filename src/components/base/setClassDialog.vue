@@ -1,6 +1,6 @@
 <template>
   <el-dialog width="60%" title="开设课程信息" :visible="dialogVisible" v-on:update:visible="$emit('update:dialogVisible')">
-    <el-form :model="form" inline>
+    <el-form :model="form" inline ref="form">
       <el-row>
         <el-col :span="12">
           <el-form-item label="课程名称" required prop="name" :rules="rules.userName">
@@ -8,7 +8,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="学分" required>
+          <el-form-item label="学分" required :rules="rules.empty">
             <el-select v-model="form.credit" placeholder="课程的学分" prop="credit" :rules="rules.empty">
               <el-option label="1" value="1"></el-option>
               <el-option label="2" value="2"></el-option>
@@ -176,13 +176,6 @@
             pattern: /[0-9]/,
             message: '输入要求是数字',
             trigger: ['blur', 'change']
-          },
-          {
-            validator: function(rule, value, callback) {
-              if(value >=1 && value <= 200)  callback();
-              else  callback(new Error("可容纳人数的范围在1-200之间"));
-            },
-            trigger: ['blur', 'change']
           }
         ],
         classOptions: []
@@ -194,12 +187,23 @@
         this.formattingAddress();
         this.formattingTime();
         this.computedSum();
-        // this.form.selectedSum = 0;
         console.log(this.form);
+        // 校验表单中的数据
+        let res;
+        this.$refs['form'].validate(valid => res = valid);
+        if(!res) {
+          this.$message({
+            message: '填写的信息有误，请修正后再提交',
+            type: 'error',
+            duration: 1000
+          });
+          return;
+        }
       },
       // 格式化上课地点
       // 原本格式为："理科南教学楼", "理科南教学楼+6", "理科南教学楼+6+06"
       formattingAddress(arr) {
+        if(!this.form.address)  return;
         let str = "";
         this.form.address.forEach((val, index) => {
           if(index === 0)  str += val;

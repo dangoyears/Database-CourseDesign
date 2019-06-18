@@ -3,7 +3,7 @@
     <div class="input-main">
       <input type="text" class="login-item user-item" :placeholder="prompt" v-model="form.user" @input="testData">
       <p class="wrong-prompt">{{userPrompt}}</p>
-      <input type="password" class="login-item psd-item" placeholder="请输入登陆密码"  v-model="form.psd" @focus="psdPrompt=''">
+      <input type="password" class="login-item psd-item" placeholder="请输入登陆密码"  v-model="form.psd" @focus="psdPrompt=''" @keydown.enter="signIn">
       <p class="wrong-prompt">{{psdPrompt}}</p>
       <button type="submit" class="login-item" @click="signIn">登陆</button>
     </div>

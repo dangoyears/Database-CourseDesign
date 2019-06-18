@@ -15,11 +15,6 @@ export default {
   // 上传学院信息
   uploadCollegeInfo(obj) {
     axios.post(`https://dbcd.qfstudio.net/write/college?token=${obj.token}`, obj)
-    .then(function(response) {
-      console.log(obj);
-      console.log("response:");
-      console.log(response);
-    })
     .catch(function(error) {
       alert(error);
     })
@@ -29,6 +24,16 @@ export default {
     axios.get(`https://dbcd.qfstudio.net/read/college?token=${token}`)
     .then(function(response) {
       callback(response.data.data);
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
+  // 获取所有教师信息
+  getTeacherInfo(callback, token) {
+    axios.get(`https://dbcd.qfstudio.net//read/teacher?token=${token}`)
+    .then(function(response) {
+      callback(response);
     })
     .catch(function(error) {
       alert(error);

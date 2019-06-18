@@ -1,9 +1,13 @@
 <template>
   <div class="container">
-    <p class="teacher-header">
-      <label class="teacher-label">教师个人信息：</label>
-      <label class="teacher-name">{{teacherInfo.name}}</label>
-    </p>
+    <header class="teacher-header">
+        <label class="teacher-label">教师个人信息：</label>
+        <label class="teacher-name">{{teacherInfo.name}}</label>
+        <div  class="user-tab">
+          <span class="user-name">Hello, {{teacherInfo.name}}</span>
+          <img src="../../assets/switch1.png" alt="切换账号" @click="switchUser">
+        </div>
+    </header>
     <table class="teacher-table">
       <tr>
         <td class="column">姓名</td>
@@ -77,6 +81,15 @@
       }
     },
     methods: {
+      switchUser() {
+        this.$confirm('是否确定要切换账号？', '提醒', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$router.push({name: 'login'})
+        }).catch(() => {})
+      },
       createClassInfos() {
         this.setClassInfoVisible = true;
       },
@@ -93,7 +106,7 @@
   .portrait {
     width: 200px;
     height: 245px; 
-    background: #eee url('../../assets/user3.png') no-repeat center 120%;
+    background: #eee url('../../assets/teacher1.png') no-repeat center 120%;
     position: absolute;
     right: 0;
     top: 0;
@@ -143,5 +156,20 @@
   .addIcon:hover {
     transform: scale(1.2, 1.2) rotate(180deg);
     transition: all linear .2s; 
+  }
+  .user-tab {
+    position: absolute;
+    right: 10px;
+    top: 15px;
+    cursor: pointer;
+  }
+  .user-name {
+    background: url('../../assets/teacher.png') no-repeat;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 35px;
+    margin-right: 15px;
+    color: #71787E;
   }
 </style>

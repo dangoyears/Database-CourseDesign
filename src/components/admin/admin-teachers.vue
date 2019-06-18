@@ -113,8 +113,15 @@
 
 <script>
   import rules from '../../base/rules'
+  import api from '../../api/index'
+
   export default {
-    props: ["collegeInfos"],
+    created() {
+      api.getTeacherInfo((response) => {
+        console.log(response);
+      }, this.token);
+    },
+    props: ["collegeInfos", "token"],
     data() {
       return {
         dialogVisible: false,

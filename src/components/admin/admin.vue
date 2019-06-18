@@ -32,6 +32,7 @@
       this.userName = sessionData.user;
       this.token = sessionData.token;
       api.getCollegeInfo((response) => {
+        if(!response)  return;
         this.collegeInfos = response.slice(0);
         this.formatingCollegeInfo();
       }, this.token);
@@ -80,7 +81,7 @@
           if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
           let college = this.formatCollegeInfos[val.college];
           if(!college[val.specialty]) college[val.specialty] = [];
-          college[val.specialty].push(val.grade + val.class + "");
+          college[val.specialty].push("" + val.grade + val.class);
         })
       },
     }
