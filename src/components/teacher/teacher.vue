@@ -49,7 +49,6 @@
       v-on:update:dialogVisible="changeClassDialogVisible"
     ></class-dialog>
   </div>
-
 </template>
 
 <script>

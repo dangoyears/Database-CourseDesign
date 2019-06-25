@@ -8,13 +8,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="学分" required :rules="rules.empty">
-            <el-select v-model="form.credit" placeholder="课程的学分" prop="credit" :rules="rules.empty">
-              <el-option label="1" value="1"></el-option>
-              <el-option label="2" value="2"></el-option>
-              <el-option label="3" value="3"></el-option>
-              <el-option label="4" value="4"></el-option>
-            </el-select>
+          <el-form-item label="课程编号" required prop="id" :rules="rules.numberId">
+            <el-input placeholder="课程编号" v-model="form.id"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -31,13 +26,13 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="上课地点" required prop="address" :rules="rules.empty">
-            <el-cascader
-              v-model="form.address"
-              :options="addressOptions"
-              :props="{expandTrigger: 'hover'}"
-              separator=""
-            ></el-cascader>
+          <el-form-item label="学分" required :rules="rules.empty">
+            <el-select v-model="form.credit" placeholder="课程的学分" prop="credit" :rules="rules.empty">
+              <el-option label="1" value="1"></el-option>
+              <el-option label="2" value="2"></el-option>
+              <el-option label="3" value="3"></el-option>
+              <el-option label="4" value="4"></el-option>
+            </el-select>
           </el-form-item>
         </el-col>
       </el-row >
@@ -72,8 +67,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="课程组长">
-            <el-select v-model="form.courseLeader" placeholder="请选择课程组长" :disabled="form.teachers.length<2">
+          <el-form-item label="课程组长" required prop="courseLeader" :rules="rules.empty">
+            <el-select v-model="form.courseLeader" placeholder="请选择课程组长">
               <el-option v-for="val in form.teachers" :key="val" :value="val"></el-option>
             </el-select>
           </el-form-item>
@@ -115,6 +110,18 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="上课地点" required prop="address" :rules="rules.empty">
+            <el-cascader
+              v-model="form.address"
+              :options="addressOptions"
+              :props="{expandTrigger: 'hover'}"
+              separator=""
+            ></el-cascader>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <div slot="footer">
       <el-button @click="dialogVisible=false">取消</el-button>
@@ -148,6 +155,7 @@
       return {
         form: {
           name: '',
+          id: '',
           credit: '',
           weekStart: '',
           weekEnd: '',
@@ -274,6 +282,14 @@
           this.form.accommodate = s + "";
           this.form.selectedSum = s + "";
         })
+      }
+    },
+    watch: {
+      // 重新打开弹框时清空提示信息
+      dialogVisible() {
+        if (this.$refs['form'] !== undefined) {
+          this.$refs['form'].clearValidate();
+        }
       }
     }
   }
