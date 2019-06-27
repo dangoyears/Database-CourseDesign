@@ -39,13 +39,27 @@
         </el-table-column>
       </el-table>
     </el-main>
+    <class-dialog 
+      :dialogVisible="classInfoVisible"
+      :collegeInfos="collegeInfos"
+      v-on:update:dialogVisible="changeClassDialogVisible"
+      ></class-dialog>
+    <img src="../../assets/add.png" class="addIcon" @click="setClassInfo">
   </el-container>
 </template>
 
 <script>
+  import classDialog from '../base/setClassDialog'
+
   export default {
+    components: {
+      'class-dialog': classDialog
+    },
+    props: ["collegeInfos", "token"],
     data() {
       return {
+        classInfoVisible: false,
+        dialogVisible: false,
         courseInfo: [
           {
             name: "数据结构",
@@ -69,6 +83,13 @@
       deleteCourseInfo() {
 
       },
+      // 打开弹出框并初始化表单信息
+      openCollegeInfo() {
+        this.dialogVisible = true;
+        this.$nextTick(() => {
+          this.$refs['form'].clearValidate();
+        })
+      },
       // 将任课教师数组格式化成字符串
       formattingTeachers(arr) {
         let str = "";
@@ -76,7 +97,14 @@
           str += (index !== arr.length-1) ? `${val}, ` : val;
         })
         return str;
-      }
+      },
+      // 打开开设课程的弹框
+      setClassInfo() {
+        this.classInfoVisible = true;
+      },
+      changeClassDialogVisible() {
+        this.classInfoVisible = false;
+      },
     },
     computed: {
     

@@ -13,19 +13,29 @@ export default {
     })
   },
   // 上传学院信息
-  uploadCollegeInfo(obj) {
-    axios.post(`https://dbcd.qfstudio.net/write/college?token=${obj.token}`, obj)
+  uploadCollegeInfo(obj, token) {
+    obj.token = token;
+    axios.post(`https://dbcd.qfstudio.net/write/college`, obj)
+    .catch(function(error) {
+      alert(error);
+    })
+  },
+  // 上传教师信息
+  uploadTeacherInfo(obj, token) {
+    console.log(obj, token);
+    axios.post(`https://dbcd.qfstudio.net/write/teacher?token=${token}`, obj)
+    .then(function(response) {
+      console.log("success");
+      console.log(response);
+    })
     .catch(function(error) {
       alert(error);
     })
   },
   // 上传学生信息
   uploadStudentInfo(obj, token) {
-    axios.post(`https://dbcd.qfstudio.net/write/student?token=${token}`, obj)
-    .then(function(response) {
-      console.log("success");
-      console.log(response);
-    })
+    obj = Object.assign(obj, {token: token});
+    axios.post(`https://dbcd.qfstudio.net/write/student`, obj)
     .catch(function(error) {
       alert(error);
     })
@@ -61,9 +71,18 @@ export default {
     })
   },
   // 删除学院信息
-  deleteCollegeInfo(obj) {
-    axios.get('https://dbcd.qfstudio.net/delete/class', {
-      params: obj
+  deleteCollegeInfo(obj, token) {
+    obj.token = token;
+    axios.post('https://dbcd.qfstudio.net/delete/class', obj)
+    .catch(function(error) {
+      alert(error);
+    })
+  },
+  // 删除学生信息
+  deleteStudent(id, type, token, callback) {
+    axios.post('https://dbcd.qfstudio.net/delete/both', {id, type, token})
+    .then(function() {
+      callback();
     })
     .catch(function(error) {
       alert(error);

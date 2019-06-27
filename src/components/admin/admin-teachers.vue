@@ -158,6 +158,7 @@
       }
     },
     methods: {
+      // 打开弹框
       createTeacherInfos() {
         if(this.editingDialog) {
           this.form = {};
@@ -185,6 +186,11 @@
         }
         // 学生账号登陆密码为身份证后六位
         this.form.password = this.form.idCard.slice(-6);
+        api.uploadTeacherInfo(this.form, this.token);
+        console.log("return data");
+        api.getTeacherInfo((response) => {
+          console.log(response);
+        }, this.token);
         this.$message({
           message: '创建成功。',
           type: 'success',

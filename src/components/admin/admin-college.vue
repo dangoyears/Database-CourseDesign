@@ -6,12 +6,11 @@
           <template slot="title">
             <p class="labelStyle" :title="collegeName">{{collegeName}}</p>
           </template>
-          <el-submenu :index="specialtyName" v-for="(item1, specialtyName) in item" :key="collegeName + specialtyName">
+          <el-submenu :index="specialtyName" v-for="(item1, specialtyName) in item" :key="specialtyName">
             <template slot="title">
               <p class="labelStyle" :title="specialtyName">{{specialtyName}}</p>
             </template>
-            <!-- <el-menu-item :index="val" v-for="val in item1" :key="collegeName + specialtyName + val">{{val}}</el-menu-item> -->
-            <el-menu-item :index="val" v-for="val in item1" :key="getKey(val)">{{val}}</el-menu-item>
+            <el-menu-item :index="val" v-for="val in item1" :key="collegeName + specialtyName + val">{{val}}</el-menu-item>
           </el-submenu>
         </el-submenu>
       </el-menu>
@@ -68,20 +67,12 @@
         <el-button type="primary" @click="submitCollegeInfo">确定</el-button>
       </div>
     </el-dialog>
-    <img src="../../assets/add.png" class="addIcon" @click="setClassInfo">
-    <class-dialog 
-      :dialogVisible="setClassInfoVisible"
-      :collegeInfos="collegeInfos"
-      :formatCollegeInfos="formatCollegeInfos"
-      v-on:update:dialogVisible="changeClassDialogVisible"
-      ></class-dialog>
   </el-container>
 </template>
 
 <script>
   import api from '../../api/index'
   import rules from '../../base/rules'
-  import classDialog from '../base/setClassDialog'
 
   export default {
     mounted() {
@@ -111,13 +102,10 @@
         })
       }, 1000)
     },
-    props: ["formatCollegeInfos", "collegeInfos", "token"],
-    components: {
-      'class-dialog': classDialog
-    },
+    props: ["collegeInfos", "token"],
     data() {
       return {
-        setClassInfoVisible: false,
+        formatCollegeInfos: {},   // 格式化后的数据
         dialogVisible: false,
         rules: rules,
         search: '',
@@ -129,8 +117,7 @@
           college: '',
           specialty: '',
           grade: '',
-          class: '',
-          token: this.token
+          class: ''
         }
       }
     },
@@ -155,7 +142,7 @@
           });
           return;
         }
-        api.uploadCollegeInfo(this.form);
+        api.uploadCollegeInfo(this.form, this.token);
         // 把新创建的班级信息添加到collegeInfos，这样不重新请求数据就可以及时显示新数据
         let temp = Object.assign(this.form, {sum: 0});
         this.collegeInfos.push(temp);
@@ -170,21 +157,24 @@
       },
       // 删除学院数据
       deleteCollegeInfo(info) {
+        // 确保所有数据都为string类型
+        for(let [key, val] of Object.entries(info)) {
+          info[key] = val + "";
+        }
         this.$confirm('是否确定要删除该条数据', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
         .then(() => {
-          console.log(info);
-          // // 删除后修改collegeInfos，这样不重新请求数据就可以及时显示新数据
+          // 删除后修改collegeInfos，这样不重新请求数据就可以及时显示新数据
           for(let i=0; i<this.collegeInfos.length; i++) {
             if(JSON.stringify(this.collegeInfos[i]) === JSON.stringify(info)) {
               this.collegeInfos.splice(i, 1);
               break;
             }
           }
-          // api.deleteCollegeInfo(info);
+          api.deleteCollegeInfo(info, this.token);
           this.$message({
             type: 'success',
             message: '删除成功'
@@ -222,15 +212,27 @@
         const property = column['property'];
         return row[property] === value;
       },
-      // 打开开设课程的弹框
-      setClassInfo() {
-        this.setClassInfoVisible = true;
-      },
-      changeClassDialogVisible() {
-        this.setClassInfoVisible = false;
-      },
-      getKey(val) {
-        return Math.random();
+    },
+    watch: {
+      // 格式化后端返回的数据，用于左侧边栏显示
+      /* 
+        {
+          college: {
+            specialty: {
+              class: []
+            }
+          }
+        }
+      */
+      collegeInfos() {
+        this.formatCollegeInfos = {};
+        this.collegeInfos.forEach((val) => {
+          // 若是第一次新创建学院/专业，对象/数组会为undefined
+          if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
+          let college = this.formatCollegeInfos[val.college];
+          if(!college[val.specialty])  college[val.specialty] = [];
+          college[val.specialty].push(`${val.grade}${val.class}`);
+        })
       }
     }
   }
