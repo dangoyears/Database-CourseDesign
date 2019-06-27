@@ -14,8 +14,13 @@
         </el-menu-item>
       </el-menu>
     </header>
-    <component :is="componentId" style="margin-top: 60px;" 
-    :collegeInfos.sync="collegeInfos" :formatCollegeInfos="formatCollegeInfos" :token="token"></component>
+    <component 
+      :is="componentId" 
+      :collegeInfos.sync="collegeInfos" 
+      :formatCollegeInfos.sync="formatCollegeInfos" 
+      :token="token"
+      style="margin-top: 60px;" 
+    ></component>
   </div>
 </template>
 
@@ -36,7 +41,6 @@
       api.getCollegeInfo((response) => {
         if(!response)  return;
         this.collegeInfos = response.slice(0);
-        this.formatingCollegeInfo();
       }, this.token);
     },
     data() {
@@ -69,6 +73,8 @@
           this.$router.push({name: 'login'})
         }).catch(() => {})
       },
+    },
+    watch: {
       // 格式化后端返回的数据，用于左侧边栏显示
       /* 
         {
@@ -79,14 +85,15 @@
           }
         }
       */
-      formatingCollegeInfo() {
+      collegeInfos() {
         this.collegeInfos.forEach((val) => {
+          // 若是第一次新创建学院/专业，对象/数组会为undefined
           if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
           let college = this.formatCollegeInfos[val.college];
-          if(!college[val.specialty]) college[val.specialty] = [];
-          college[val.specialty].push("" + val.grade + val.class);
+          if(!college[val.specialty])  college[val.specialty] = [];
+          college[val.specialty].push(`${val.grade}${val.class}`);
         })
-      },
+      }
     }
   }
 </script>

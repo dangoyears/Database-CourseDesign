@@ -128,9 +128,16 @@
 </template>
 
 <script>
+  import api from '../../api/index'
   import rules from '../../base/rules'
   export default {
-    props: ["collegeInfos"],
+    mounted() {
+      api.getStudentInfo((response) => {
+        console.log(response);
+        this.studentInfo = response.data.data;
+      }, this.token);
+    },
+    props: ["collegeInfos", "token"],
     data() {
       return {
         dialogVisible: false,
@@ -151,20 +158,20 @@
           password: ''
         },
         studentInfo: [
-          {
-            "college": "计算机科学与网络工程学院",
-            "specialty": "软件工程",
-            "grade": "17",
-            "class": "1",
-            "name": "夏侯瑾轩",
-            "studentId": "1706300032",
-            "sex": "男",
-            "status": "在读本科生",
-            "birthday": "1998-09-06",
-            "age": "21",
-            "idCard": "440582199708310612",
-            "yearSystem": "4"
-          }
+          // {
+          //   "college": "计算机科学与网络工程学院",
+          //   "specialty": "软件工程",
+          //   "grade": "17",
+          //   "class": "1",
+          //   "name": "夏侯瑾轩",
+          //   "studentId": "1706300032",
+          //   "sex": "男",
+          //   "status": "在读本科生",
+          //   "birthday": "1998-09-06",
+          //   "age": "21",
+          //   "idCard": "440582199708310612",
+          //   "yearSystem": "4"
+          // }
         ],
         // 表单的校验规则
         rules: rules
@@ -204,6 +211,12 @@
           type: 'success',
           duration: 1000
         });
+        console.log(this.form);
+        api.uploadStudentInfo(this.form);
+        api.getStudentInfo((response) => {
+          console.log("return data");
+          console.log(response);
+        }, this.token);
       },
       editStudentInfo(item) {
         // 需要深拷贝一份，否则编辑时会马上修改到表格中

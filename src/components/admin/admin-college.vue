@@ -6,11 +6,12 @@
           <template slot="title">
             <p class="labelStyle" :title="collegeName">{{collegeName}}</p>
           </template>
-          <el-submenu :index="specialtyName" v-for="(item1, specialtyName) in item" :key="specialtyName">
+          <el-submenu :index="specialtyName" v-for="(item1, specialtyName) in item" :key="collegeName + specialtyName">
             <template slot="title">
               <p class="labelStyle" :title="specialtyName">{{specialtyName}}</p>
             </template>
-            <el-menu-item :index="val" v-for="val in item1" :key="val">{{val}}</el-menu-item>
+            <!-- <el-menu-item :index="val" v-for="val in item1" :key="collegeName + specialtyName + val">{{val}}</el-menu-item> -->
+            <el-menu-item :index="val" v-for="val in item1" :key="getKey(val)">{{val}}</el-menu-item>
           </el-submenu>
         </el-submenu>
       </el-menu>
@@ -138,7 +139,7 @@
       openCollegeInfo() {
         this.dialogVisible = true;
         this.$nextTick(() => {
-            this.$refs['form'].clearValidate();
+          this.$refs['form'].clearValidate();
         })
       },
       // 提交表单信息
@@ -155,7 +156,7 @@
           return;
         }
         api.uploadCollegeInfo(this.form);
-        // 把新创建的班级信息及时显示出来
+        // 把新创建的班级信息添加到collegeInfos，这样不重新请求数据就可以及时显示新数据
         let temp = Object.assign(this.form, {sum: 0});
         this.collegeInfos.push(temp);
         this.dialogVisible = false;
@@ -169,13 +170,21 @@
       },
       // 删除学院数据
       deleteCollegeInfo(info) {
-        console.log(info);
         this.$confirm('是否确定要删除该条数据', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
         .then(() => {
+          console.log(info);
+          // // 删除后修改collegeInfos，这样不重新请求数据就可以及时显示新数据
+          for(let i=0; i<this.collegeInfos.length; i++) {
+            if(JSON.stringify(this.collegeInfos[i]) === JSON.stringify(info)) {
+              this.collegeInfos.splice(i, 1);
+              break;
+            }
+          }
+          // api.deleteCollegeInfo(info);
           this.$message({
             type: 'success',
             message: '删除成功'
@@ -219,6 +228,9 @@
       },
       changeClassDialogVisible() {
         this.setClassInfoVisible = false;
+      },
+      getKey(val) {
+        return Math.random();
       }
     }
   }
