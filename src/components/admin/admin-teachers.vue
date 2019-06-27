@@ -46,7 +46,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="工号" label-width="50px" required :rules="rules.numberId" prop="jobId" sortable>
+            <el-form-item label="工号" label-width="50px" required :rules="jobIdRule" prop="jobId" sortable>
               <el-input placeholder="请输入教师工号" v-model="form.jobId" :disabled="editingDialog"></el-input>
             </el-form-item>
           </el-col>
@@ -117,9 +117,7 @@
 
   export default {
     created() {
-      api.getTeacherInfo((response) => {
-        console.log(response);
-      }, this.token);
+      this.getTeacherInfo();
     },
     props: ["collegeInfos", "token"],
     data() {
@@ -139,25 +137,40 @@
           password: '',
           position: ""
         },
-        teacherInfo: [
-          {
-            "college": "计算机科学与网络工程学院",
-            "name": "夏侯瑾轩",
-            "jobId": "1706300032",
-            "sex": "男",
-            "education": '硕士',
-            "graduation": '南开大学',
-            "birthday": "1998-09-06",
-            "age": "21",
-            "idCard": "440582199708310612",
-            "position": "教务办主任"
-          }
-        ],
+        teacherInfo: [],
         // 表单的校验规则
-        rules: rules
+        rules: rules,
+        // 教师工号的规则判断，避免重复
+        jobIdRule: [
+          {
+            required: true,
+            message: '输入不能为空',
+            trigger: ['blur', 'change']
+          },
+          {
+            pattern: /^[0-9]{10}$/,
+            message: '输入必须为10个数字',
+            trigger: ['blur']
+          },
+          {
+            validator: (rule, value, callback) => {
+              for(let i=0; i<this.teacherInfo.length; i++) {
+                if(this.teacherInfo[i].jobId === value) {
+                  callback(new Error("该工号已存在。"));
+                }
+              }
+            },
+            trigger: ['blur', 'change']
+          }
+        ]
       }
     },
     methods: {
+      getTeacherInfo() {
+        api.getTeacherInfo((response) => {
+          this.teacherInfo = response.data.data;
+        }, this.token);
+      },
       // 打开弹框
       createTeacherInfos() {
         if(this.editingDialog) {
@@ -171,6 +184,7 @@
         if (this.$refs['form'] !== undefined) {
           this.$refs['form'].clearValidate();
         }
+        this.editingDialog = false;
       },
       submitTeacherInfos() {
         let res;
@@ -186,13 +200,15 @@
         }
         // 学生账号登陆密码为身份证后六位
         this.form.password = this.form.idCard.slice(-6);
-        api.uploadTeacherInfo(this.form, this.token);
-        console.log("return data");
-        api.getTeacherInfo((response) => {
-          console.log(response);
-        }, this.token);
+        // 确保所有数据都为string类型
+        for(let [key, val] of Object.entries(this.form)) {
+          this.form[key] = val + "";
+        }
+        api.uploadTeacherInfo(this.form, this.token, this.getTeacherInfo);
+        this.dialogVisible = false;
+        this.form = {};
         this.$message({
-          message: '创建成功。',
+          message: '操作成功。',
           type: 'success',
           duration: 1000
         });

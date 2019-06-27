@@ -21,12 +21,11 @@ export default {
     })
   },
   // 上传教师信息
-  uploadTeacherInfo(obj, token) {
-    console.log(obj, token);
-    axios.post(`https://dbcd.qfstudio.net/write/teacher?token=${token}`, obj)
-    .then(function(response) {
-      console.log("success");
-      console.log(response);
+  uploadTeacherInfo(obj, token, callback) {
+    obj = Object.assign(obj, {token: token});
+    axios.post(`https://dbcd.qfstudio.net/write/teacher`, obj)
+    .then(function() {
+      callback();
     })
     .catch(function(error) {
       alert(error);

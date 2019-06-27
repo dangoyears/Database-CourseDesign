@@ -6,11 +6,11 @@
           <template slot="title">
             <p class="labelStyle" :title="collegeName">{{collegeName}}</p>
           </template>
-          <el-submenu :index="specialtyName" v-for="(item1, specialtyName) in item" :key="specialtyName">
+          <el-submenu :index="specialtyName" v-for="(item1, specialtyName) in item" :key="collegeName + specialtyName">
             <template slot="title">
               <p class="labelStyle" :title="specialtyName">{{specialtyName}}</p>
             </template>
-            <el-menu-item :index="val" v-for="val in item1" :key="collegeName + specialtyName + val">{{val}}</el-menu-item>
+            <el-menu-item :index="collegeName + specialtyName + val" v-for="val in item1" :key="collegeName + specialtyName + val">{{val}}</el-menu-item>
           </el-submenu>
         </el-submenu>
       </el-menu>
@@ -58,7 +58,7 @@
         <el-form-item label="年级" label-width="50px" prop="grade" :rules="rules.number">
           <el-input v-model="form.grade" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="班级" label-width="50px" prop="class" :rules="rules.number">
+        <el-form-item label="班级" label-width="50px" prop="class" :rules="classRule">
           <el-input v-model="form.class" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -101,6 +101,7 @@
           this.filterGradeArr.push({text: val, value: val});
         })
       }, 1000)
+      this.formattingCollegeInfo();
     },
     props: ["collegeInfos", "token"],
     data() {
@@ -118,7 +119,36 @@
           specialty: '',
           grade: '',
           class: ''
-        }
+        },
+        // 新建班级的规则判断，避免重复
+        classRule: [
+          {
+            required: true,
+            message: '输入不能为空',
+            trigger: ['blur', 'change']
+          },
+          {
+            pattern: /^[0-9]{1,2}$/,
+            message: '输入需要是1-2位数字',
+            trigger: ['blur', 'change']
+          },
+          {
+            validator: (rule, value, callback) => {
+              let college = this.formatCollegeInfos[this.form.college] ;
+              if(!college)  {
+                callback();
+                return;
+              }
+              let specialty = this.formatCollegeInfos[this.form.college][this.form.specialty];
+              if(!specialty)  {
+                callback();
+                return;
+              }
+              (specialty.indexOf(`${this.form.grade}${this.form.class}`) !== -1) ? callback(new Error("该班级已经存在。")) : callback();
+            },
+            trigger: ['blur', 'change']
+          }
+        ]
       }
     },
     methods: {
@@ -212,8 +242,6 @@
         const property = column['property'];
         return row[property] === value;
       },
-    },
-    watch: {
       // 格式化后端返回的数据，用于左侧边栏显示
       /* 
         {
@@ -224,7 +252,7 @@
           }
         }
       */
-      collegeInfos() {
+      formattingCollegeInfo() {
         this.formatCollegeInfos = {};
         this.collegeInfos.forEach((val) => {
           // 若是第一次新创建学院/专业，对象/数组会为undefined
@@ -233,6 +261,12 @@
           if(!college[val.specialty])  college[val.specialty] = [];
           college[val.specialty].push(`${val.grade}${val.class}`);
         })
+      }
+    },
+    watch: {
+      // 添加班级信息时实时更新侧边栏
+      collegeInfos() {
+        this.formattingCollegeInfo();
       }
     }
   }

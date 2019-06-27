@@ -163,7 +163,6 @@
       getStudentInfo() {
         api.getStudentInfo((response) => {
           this.studentInfo = response.data.data;
-          console.log(this.studentInfo);
         }, this.token);
       },
       createStudentInfo() {
