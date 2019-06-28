@@ -157,8 +157,10 @@
               for(let i=0; i<this.teacherInfo.length; i++) {
                 if(this.teacherInfo[i].jobId === value) {
                   callback(new Error("该工号已存在。"));
+                  return;
                 }
               }
+              callback();
             },
             trigger: ['blur', 'change']
           }
@@ -168,7 +170,7 @@
     methods: {
       getTeacherInfo() {
         api.getTeacherInfo((response) => {
-          this.teacherInfo = response.data.data;
+          this.teacherInfo = response;
         }, this.token);
       },
       // 打开弹框
@@ -250,15 +252,17 @@
       },
       gradeArr() {
         let arr = this.collegeInfos.map(val => {
-          if(val.specialty === this.form.specialty)  return val.grade;
+          if(val.college === this.form.college && val.specialty === this.form.specialty)  return val.grade;
         })
-        return Array.from(new Set(arr.filter(val => val)));
+        arr = [...new Set(arr.filter(val => val))];
+        return arr.map(val => val + "");
       },
       classArr() {
         let arr = this.collegeInfos.map(val => {
-          if(val.grade === this.form.grade)  return val.class;
+          if(val.specialty === this.form.specialty && val.grade + "" === this.form.grade)  return val.class;
         })
-        return Array.from(new Set(arr.filter(val => val)));
+        arr = [...new Set(arr.filter(val => val))];
+        return arr.map(val => val + "");
       },
       computeAge() {
         // 如果是编辑信息，需要将出生日期转换为时间戳的形式，才好计算年龄

@@ -105,9 +105,6 @@
       changeClassDialogVisible() {
         this.classInfoVisible = false;
       },
-    },
-    computed: {
-    
     }
   }
 </script>

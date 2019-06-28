@@ -79,7 +79,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="学号" label-width="50px" required :rules="rules.numberId" prop="studentId">
+            <el-form-item label="学号" label-width="50px" required :rules="studentIdRule" prop="studentId">
               <el-input placeholder="请输入学生学号" v-model="form.studentId" :disabled="editingDialog"></el-input>
             </el-form-item>
           </el-col>
@@ -102,18 +102,19 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="10">
+          <el-col :span="12">
             <el-form-item label="学年制" label-width="65px" prop="yearSystem" :rules="rules.number">
               <el-input v-model="form.yearSystem" placeholder="请输入学年制"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="14">
+          <el-col :span="12">
             <el-form-item label="学历" label-width="50px" prop="status" :rules="rules.empty" required>
-              <el-radio-group v-model="form.status">
-                <el-radio-button label="在读本科生">在读本科生</el-radio-button>
-                <el-radio-button label="在读研究生">在读研究生</el-radio-button>
-                <el-radio-button label="在读博士生">在读博士生</el-radio-button>
-              </el-radio-group>
+              <el-select v-model="form.status">
+                <el-option value="在读本科生"></el-option>
+                <el-option value="在读研究生"></el-option>
+                <el-option value="毕业本科生"></el-option>
+                <el-option value="毕业研究生"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -156,13 +157,39 @@
         },
         studentInfo: [],
         // 表单的校验规则
-        rules: rules
+        rules: rules,
+        // 学号的规则判断，避免重复
+        studentIdRule: [
+          {
+            required: true,
+            message: '输入不能为空',
+            trigger: ['blur', 'change']
+          },
+          {
+            pattern: /^[0-9]{10}$/,
+            message: '输入必须为10个数字',
+            trigger: ['blur']
+          },
+          {
+            validator: (rule, value, callback) => {
+              for(let i=0; i<this.studentInfo.length; i++) {
+                // 若是编辑状态，则不启用学号判断，因为编辑时学号不能更改
+                if(this.studentInfo[i].studentId === value && !this.editingDialog) {
+                  callback(new Error("该学号已存在。"));
+                  return;
+                }
+              }
+              callback();
+            },
+            trigger: ['blur', 'change']
+          }
+        ]
       }
     },
     methods: {
       getStudentInfo() {
         api.getStudentInfo((response) => {
-          this.studentInfo = response.data.data;
+          this.studentInfo = response;
         }, this.token);
       },
       createStudentInfo() {
@@ -172,8 +199,8 @@
             this.$refs['form'].clearValidate();
           })
         }
-        this.dialogVisible = true;
         this.editingDialog = false;
+        this.dialogVisible = true;
         // 增加和编辑同用一个弹框，第一次弹出 this.$refs['form'] 会是undefined，或是用 $nextTick
         if (this.$refs['form'] !== undefined) {
           this.$refs['form'].clearValidate();
@@ -194,17 +221,18 @@
         }
         // 学生账号登陆密码为身份证后六位
         this.form.password = this.form.idCard.slice(-6);
+        // 确保所有数据都为string类型
+        for(let [key, val] of Object.entries(this.form)) {
+          this.form[key] = val + "";
+        }
+        api.uploadStudentInfo(this.form, this.token, this.getStudentInfo);
+        this.dialogVisible = false;
+        this.form = {};
         this.$message({
           message: '创建成功。',
           type: 'success',
           duration: 1000
         });
-          // 确保所有数据都为string类型
-        for(let [key, val] of Object.entries(this.form)) {
-          this.form[key] = val + "";
-        }
-        api.uploadStudentInfo(this.form, this.token);
-        this.getStudentInfo();
       },
       // 编辑信息
       editStudentInfo(item) {
@@ -221,9 +249,7 @@
           type: 'warning'
         })
         .then(() => {
-          api.deleteStudent(item.studentId, "student", this.token, () => {
-            this.getStudentInfo();
-          });
+          api.deleteStudent(item.studentId, "student", this.token, this.getStudentInfo);
           this.$message({
             type: 'success',
             message: '删除成功!',
@@ -248,15 +274,17 @@
       },
       gradeArr() {
         let arr = this.collegeInfos.map(val => {
-          if(val.specialty === this.form.specialty)  return val.grade;
+          if(val.college === this.form.college && val.specialty === this.form.specialty)  return val.grade;
         })
-        return Array.from(new Set(arr.filter(val => val)));
+        arr = [...new Set(arr.filter(val => val))];
+        return arr.map(val => val + "");
       },
       classArr() {
         let arr = this.collegeInfos.map(val => {
-          if(val.grade === this.form.grade)  return val.class;
+          if(val.specialty === this.form.specialty && val.grade + "" === this.form.grade)  return val.class;
         })
-        return Array.from(new Set(arr.filter(val => val)));
+        arr = [...new Set(arr.filter(val => val))];
+        return arr.map(val => val + "");
       },
       computeAge() {
         // 如果是编辑信息，需要将出生日期转换为时间戳的形式，才好计算年龄

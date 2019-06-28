@@ -32,9 +32,14 @@ export default {
     })
   },
   // 上传学生信息
-  uploadStudentInfo(obj, token) {
+  uploadStudentInfo(obj, token, callback) {
     obj = Object.assign(obj, {token: token});
+    console.log(obj);
     axios.post(`https://dbcd.qfstudio.net/write/student`, obj)
+    .then(function(response) {
+      console.log(response);
+      callback();
+    })
     .catch(function(error) {
       alert(error);
     })
@@ -53,7 +58,7 @@ export default {
   getTeacherInfo(callback, token) {
     axios.get(`https://dbcd.qfstudio.net/read/teacher?token=${token}`)
     .then(function(response) {
-      callback(response);
+      callback(response.data.data);
     })
     .catch(function(error) {
       alert(error);
@@ -63,7 +68,7 @@ export default {
   getStudentInfo(callback, token) {
     axios.get(`https://dbcd.qfstudio.net/read/student?token=${token}`)
     .then(function(response) {
-      callback(response);
+      callback(response.data.data);
     })
     .catch(function(error) {
       alert(error);
