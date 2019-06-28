@@ -26,13 +26,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="学分" required :rules="rules.empty">
-            <el-select v-model="form.credit" placeholder="课程的学分" prop="credit" :rules="rules.empty">
-              <el-option label="1" value="1"></el-option>
-              <el-option label="2" value="2"></el-option>
-              <el-option label="3" value="3"></el-option>
-              <el-option label="4" value="4"></el-option>
-            </el-select>
+          <el-form-item label="学分" required prop="credit" :rules="rules.number">
+            <el-input v-model="form.credit" placeholder="课程的学分"></el-input>
           </el-form-item>
         </el-col>
       </el-row >
@@ -46,6 +41,7 @@
               clearable
               :show-all-levels="false"
               @change="classHandler"
+              placeholder="若是选修课则可不填"
             ></el-cascader>
           </el-form-item>
         </el-col>
@@ -59,10 +55,7 @@
         <el-col :span="12">
           <el-form-item label="任课教师" required prop="teachers" :rules="rules.empty">
             <el-select v-model="form.teachers" placeholder="请选择任课教师" multiple clearable @change="teachersHandler">
-              <el-option value="aaa"></el-option>
-              <el-option value="bbb"></el-option>
-              <el-option value="ccc"></el-option>
-              <el-option value="ddd"></el-option>
+              <el-option v-for="val in teacherList" :key="val.jobId" :value="val.name"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -118,13 +111,14 @@
               :options="addressOptions"
               :props="{expandTrigger: 'hover'}"
               separator=""
+               placeholder="请选择上课地点"
             ></el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <div slot="footer">
-      <el-button @click="dialogVisible=false">取消</el-button>
+      <el-button @click="$emit('update:dialogVisible')">取消</el-button>
       <el-button type="primary" @click="submitClassInfos">确定</el-button>
     </div>
   </el-dialog>
@@ -133,9 +127,13 @@
 <script>
   import data from '../../base/data'
   import rules from '../../base/rules'
+  import api from '../../api/index'
+
   export default {
     mounted() {
+      this.formattingCollegeInfo();
       this.getClassOptions();
+      this.getTeacherInfo();
     },
     props: {
       dialogVisible:  {
@@ -146,9 +144,8 @@
         type: Array,
         required: true,
       },
-      formatCollegeInfos: {
-        type: Object,
-        require: true
+      token: {
+        type: String
       }
     },
     data() {
@@ -173,6 +170,11 @@
         tempClass: [],
         // 上课地点的级联信息
         addressOptions: data.addressOptions,
+        formatCollegeInfos: {},
+        // 班级数组
+        classOptions: [],
+        // 教师列表
+        teacherList: [],
         rules: rules,
         accommodateRule: [
           {
@@ -186,16 +188,20 @@
             trigger: ['blur', 'change']
           }
         ],
-        classOptions: []
       }
     },
     methods: {
+      // 获取教师列表
+      getTeacherInfo() {
+        api.getTeacherInfo((response) => {
+          this.teacherList = response;
+        }, this.token);
+      },
       // 提交表单信息
       submitClassInfos() {
         this.formattingAddress();
         this.formattingTime();
         this.computedSum();
-        console.log(this.form);
         // 校验表单中的数据
         let res;
         this.$refs['form'].validate(valid => res = valid);
@@ -207,6 +213,23 @@
           });
           return;
         }
+        // 确保所有数据都为string类型
+        for(let [key, val] of Object.entries(this.form)) {
+          this.form[key] = val + "";
+        }
+        api.uploadClassInfo(this.form, this.token, () => {
+          console.log("this.form");
+          console.log(this.form);
+          // 通知父组件更新课程信息
+          this.$emit('updateClassInfo');
+          this.$emit('update:dialogVisible');
+        });
+        this.form = {};
+        this.$message({
+          message: '创建成功。',
+          type: 'success',
+          duration: 1000
+        });
       },
       // 格式化上课地点
       // 原本格式为："理科南教学楼", "理科南教学楼+6", "理科南教学楼+6+06"
@@ -227,6 +250,17 @@
       // 格式化上课时间
       formattingTime() {
         this.form.time = `第${this.form.weekStart}-${this.form.weekEnd}周,第${this.form.sectionStart}-${this.form.sectionEnd}节`;
+      },
+      // 格式化班级信息
+      formattingCollegeInfo() {
+        this.formatCollegeInfos = {};
+        this.collegeInfos.forEach((val) => {
+          // 若是第一次新创建学院/专业，对象/数组会为undefined
+          if(!this.formatCollegeInfos[val.college])  this.formatCollegeInfos[val.college] = {};
+          let college = this.formatCollegeInfos[val.college];
+          if(!college[val.specialty])  college[val.specialty] = [];
+          college[val.specialty].push(`${val.grade}${val.class}`);
+        })
       },
       // 级联学院专业班级
       getClassOptions() {
@@ -279,7 +313,6 @@
               }
             }
           }
-          this.form.accommodate = s + "";
           this.form.selectedSum = s + "";
         })
       }

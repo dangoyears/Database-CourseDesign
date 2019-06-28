@@ -2,21 +2,16 @@
   <el-container>
     <el-main>
       <el-table :data="courseInfo">
-        <el-table-column prop="class" label="学院" width="200" show-overflow-tooltip sortable>
+        <el-table-column prop="class" label="班级" width="300" show-overflow-tooltip sortable>
           <template slot-scope="scope">
-            <label>{{scope.row.class[0].match(/^[\u4E00-\u9FA5]+/)[0]}}</label>
-          </template>
-        </el-table-column>
-        <el-table-column prop="class" label="班级" width="140" sortable>
-          <template slot-scope="scope">
-            <label>{{scope.row.class[0].replace(/^[\u4E00-\u9FA5]+\-/, '').replace(/\-/g, '')}}</label>
+            <label>{{formattingClass(scope.row.class)}}</label>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="课程名称" width="170" show-overflow-tooltip sortable></el-table-column>
         <el-table-column prop="credit" label="学分" width="110" sortable></el-table-column>
         <el-table-column prop="nature" label="课程性质" width="150" sortable></el-table-column>
-        <el-table-column prop="time" label="上课时间" width="150" sortable></el-table-column>
-        <el-table-column prop="address" label="上课地点" width="150" sortable></el-table-column>
+        <el-table-column prop="time" label="上课时间" width="170" sortable></el-table-column>
+        <el-table-column prop="address" label="上课地点" width="170" sortable></el-table-column>
         <el-table-column prop="teachers" label="任课教师" width="180" show-overflow-tooltip sortable>
           <template slot-scope="scope">
             <label>{{formattingTeachers(scope.row.teachers)}}</label>
@@ -42,7 +37,9 @@
     <class-dialog 
       :dialogVisible="classInfoVisible"
       :collegeInfos="collegeInfos"
+      :token="token"
       v-on:update:dialogVisible="changeClassDialogVisible"
+      @updateClassInfo="updateClassInfo"
       ></class-dialog>
     <img src="../../assets/add.png" class="addIcon" @click="setClassInfo">
   </el-container>
@@ -50,8 +47,12 @@
 
 <script>
   import classDialog from '../base/setClassDialog'
+  import api from '../../api/index'
 
   export default {
+    created() {
+      this.updateClassInfo();
+    },
     components: {
       'class-dialog': classDialog
     },
@@ -60,20 +61,7 @@
       return {
         classInfoVisible: false,
         dialogVisible: false,
-        courseInfo: [
-          {
-            name: "数据结构",
-            credit: "2",
-            nature: "专业必修课",
-            accommodate: "50",
-            selectedSum: "50",
-            time: "第7-14周,第4-6节",
-            teachers: ["龙应台", "周国平", "东野圭吾", "村上春树"],
-            courseLeader: "yyy",
-            address: "理科南教学楼710",
-            class: ['计算机科学与网络学院-软件工程-171']
-          }
-        ]
+        courseInfo: []
       }
     },
     methods: {
@@ -105,6 +93,22 @@
       changeClassDialogVisible() {
         this.classInfoVisible = false;
       },
+      // 创建课程信息后重新请求数据
+      updateClassInfo() {
+        api.getClassInfo((response) => {
+          this.courseInfo = response;
+        }, this.token);
+      },
+      // 格式化后端返回的班级信息，只显示出专业和班级
+      formattingClass(str) {
+        let arr = str.split(',');
+        let res = "";
+        arr.forEach((val, index) => {
+          let temp = val.replace(/^[\u4E00-\u9FA5]+\-/, '').replace(/\-/, '');
+          res += temp + "，";
+        })
+        return res.substr(0, res.length-1);
+      }
     }
   }
 </script>

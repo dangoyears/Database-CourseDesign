@@ -44,6 +44,21 @@ export default {
       alert(error);
     })
   },
+  // 上传课程信息
+  uploadClassInfo(obj, token, callback) {
+    obj.token = token;
+    console.log("上传的form信息");
+    console.log(obj);
+    axios.post(`https://dbcd.qfstudio.net/write/course`, obj)
+    .then(function(response) {
+      console.log("response");
+      console.log(response);
+      callback();
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
   // 获取学院信息
   getCollegeInfo(callback, token) {
     axios.get(`https://dbcd.qfstudio.net/read/college?token=${token}`)
@@ -67,6 +82,16 @@ export default {
   // 获取所有学生信息
   getStudentInfo(callback, token) {
     axios.get(`https://dbcd.qfstudio.net/read/student?token=${token}`)
+    .then(function(response) {
+      callback(response.data.data);
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
+  // 获取所有课程信息
+  getClassInfo(callback, token) {
+    axios.get(`https://dbcd.qfstudio.net/read/course?token=${token}`)
     .then(function(response) {
       callback(response.data.data);
     })
