@@ -38,9 +38,11 @@
       :dialogVisible="classInfoVisible"
       :collegeInfos="collegeInfos"
       :token="token"
-      v-on:update:dialogVisible="changeClassDialogVisible"
+      v-on:update:dialogVisible="closeClassDialogVisible"
       @updateClassInfo="updateClassInfo"
-      ></class-dialog>
+      :editClassInfo="editClassInfo"
+      :isEditClass="isEditClass"
+    ></class-dialog>
     <img src="../../assets/add.png" class="addIcon" @click="setClassInfo">
   </el-container>
 </template>
@@ -60,23 +62,19 @@
     data() {
       return {
         classInfoVisible: false,
-        dialogVisible: false,
-        courseInfo: []
+        courseInfo: [],
+        isEditClass: false,
+        editClassInfo: {}
       }
     },
     methods: {
-      editCourseInfo() {
-        
+      editCourseInfo(item) {
+        this.isEditClass = true;
+        this.editClassInfo = JSON.parse(JSON.stringify(item));
+        this.classInfoVisible = true;
       },
       deleteCourseInfo() {
 
-      },
-      // 打开弹出框并初始化表单信息
-      openCollegeInfo() {
-        this.dialogVisible = true;
-        this.$nextTick(() => {
-          this.$refs['form'].clearValidate();
-        })
       },
       // 将任课教师数组格式化成字符串
       formattingTeachers(arr) {
@@ -90,8 +88,9 @@
       setClassInfo() {
         this.classInfoVisible = true;
       },
-      changeClassDialogVisible() {
+      closeClassDialogVisible() {
         this.classInfoVisible = false;
+        this.isEditClass = false;
       },
       // 创建课程信息后重新请求数据
       updateClassInfo() {

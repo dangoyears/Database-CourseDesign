@@ -9,7 +9,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="课程编号" required prop="id" :rules="rules.numberId">
-            <el-input placeholder="课程编号" v-model="form.id"></el-input>
+            <el-input placeholder="课程编号" v-model="form.id" :disabled="this.isEditClass"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -146,6 +146,12 @@
       },
       token: {
         type: String
+      },
+      isEditClass: {
+        type: Boolean
+      },
+      editClassInfo: {
+        type: Object
       }
     },
     data() {
@@ -199,6 +205,7 @@
       },
       // 提交表单信息
       submitClassInfos() {
+        console.log(this.form);
         this.formattingAddress();
         this.formattingTime();
         this.computedSum();
@@ -288,6 +295,8 @@
       // 将未格式化的tempClass格式化后存进form.class里，便于向后端传送参数
       classHandler(value) {
         this.form.class = [];
+        console.log("原来的vlaue");
+        console.log(value);
         value.forEach((val, index) => {
           this.form.class[index] = val[0] + "-" + val[1];
         })
@@ -315,6 +324,32 @@
           }
           this.form.selectedSum = s + "";
         })
+      },
+      // 启用编辑功能时，将表单信息恢复为原始格式，才可以在dialog中显示出数据值
+      recoverInfo() {
+        this.form = Object.assign({}, JSON.parse(JSON.stringify(this.editClassInfo)));      
+        // 恢复上课地点在级联选择器的数据格式
+        // ["理科南教学楼", "理科南教学楼+4", "理科南教学楼+4+05"];
+        let addressArr = [];
+        addressArr[0] = this.form.address.match(/^[\u4e00-\u9fa5]+/) + "";
+        addressArr[1] = addressArr[0] + "+" + this.form.address.match(/[0-9]{1}/);
+        addressArr[2] = addressArr[1] + "+" + this.form.address.match(/[0-9]{2}$/);
+        this.form.address = JSON.parse(JSON.stringify(addressArr));
+        // 恢复上课班级在级联选择器的数据格式
+        // [["计算机科学与网络工程学院","软件工程-171"]]
+        this.tempClass = [];
+        this.form.class.split(",").forEach((val, index) => {
+          let temp = [];
+          temp.push(val.match(/^[\u4e00-\u9fa5]+/) + "");
+          temp.push(val.replace(/^[\u4e00-\u9fa5]+\-/, "") + "");
+          this.tempClass.push(temp);
+        })
+        // 恢复上课时间
+        // 第1-16周,第5-6节
+        this.form.weekStart = this.form.time.match(/\d+/) + "";
+        this.form.weekEnd = this.form.time.replace(/[\u4e00-\u9fa50-9]+\-/, "").match(/\d+/) + "";
+        this.form.sectionStart = this.form.time.replace(/[\u4e00-\u9fa50-9-]+\,[\u4e00-\u9fa5]/, "").match(/\d+/) + "";
+        this.form.sectionEnd = this.form.time.replace(/[\u4e00-\u9fa50-9-]+\,[\u4e00-\u9fa50-9]+\-/, "").match(/\d+/) + "";
       }
     },
     watch: {
@@ -322,6 +357,13 @@
       dialogVisible() {
         if (this.$refs['form'] !== undefined) {
           this.$refs['form'].clearValidate();
+        }
+        if(this.isEditClass) {
+          this.recoverInfo();
+        }
+        else {
+          this.tempClass = [];
+          this.form = {};
         }
       }
     }
