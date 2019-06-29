@@ -57,24 +57,20 @@
   import teacherCourse from './teacher-course'
 
   export default {
+    created() {
+      // 将用户名和token存进sessionStorge里，刷新页面后仍能保持登陆状态
+      let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
+      api.getTeacher((response) => {
+        this.teacherInfo = response;
+      }, sessionData.user, sessionData.token); 
+    },
     components: {
       'class-dialog': classDialog,
       'teacher-course': teacherCourse
     },
     data() {
       return {
-        teacherInfo: {
-          "college": "计算机科学与网络工程学院",
-          "name": "夏侯瑾轩",
-          "jobId": "1706300032",
-          "sex": "男",
-          "education": '硕士',
-          "graduation": '南开大学',
-          "birthday": "1998-09-06",
-          "age": "21",
-          "idCard": "440582199708310612",
-          "position": "教务办主任"
-        },
+        teacherInfo: {},
         setClassInfoVisible: false,
         collegeInfos: []
       }

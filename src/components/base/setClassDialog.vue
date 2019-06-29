@@ -205,7 +205,6 @@
       },
       // 提交表单信息
       submitClassInfos() {
-        console.log(this.form);
         this.formattingAddress();
         this.formattingTime();
         this.computedSum();
@@ -233,7 +232,7 @@
         });
         this.form = {};
         this.$message({
-          message: '创建成功。',
+          message: '操作成功。',
           type: 'success',
           duration: 1000
         });

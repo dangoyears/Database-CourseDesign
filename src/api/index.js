@@ -99,6 +99,26 @@ export default {
       alert(error);
     })
   },
+  // 获取单个学生信息
+  getStudent(callback, id, token) {
+    axios.get(`https://dbcd.qfstudio.net/read/student/one?studentId=${id}&token=${token}`)
+    .then(function(response) {
+      callback(response.data.data);
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
+  // 获取单个教师信息
+  getTeacher(callback, id, token) {
+    axios.get(`https://dbcd.qfstudio.net/read/teacher/one?jobId=${id}&token=${token}`)
+    .then(function(response) {
+      callback(response.data.data);
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
   // 删除学院信息
   deleteCollegeInfo(obj, token) {
     obj.token = token;

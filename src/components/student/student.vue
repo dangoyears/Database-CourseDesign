@@ -66,6 +66,13 @@
   import studentSelectCourse from './student-selectCourse'
 
   export default {
+    created() {
+      // 将用户名和token存进sessionStorge里，刷新页面后仍能保持登陆状态
+      let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
+      api.getStudent((response) => {
+        this.studentInfo = response;
+      }, sessionData.user, sessionData.token); 
+    },
     components: {
       'class-dialog': classDialog,
       'student-schedule': studentSchedule,
@@ -73,21 +80,8 @@
     },
     data() {
       return {
-        studentInfo: {
-          "college": "计算机科学与网络工程学院",
-          "specialty": "软件工程",
-          "grade": "17",
-          "class": "1",
-          "name": "夏侯瑾轩",
-          "studentId": "1706300032",
-          "sex": "男",
-          "status": "在读本科生",
-          "birthday": "1998-09-06",
-          "age": "21",
-          "idCard": "440582199708310612",
-          "yearSystem": "4"
-        },
-        activeTag: 'schedule'
+        studentInfo: {},
+        activeTag: 'schedule',
       }
     },
     methods: {
