@@ -49,7 +49,7 @@
     </table>
     <el-tabs v-model="activeTag" style="padding: 4px 10px">
       <el-tab-pane label="课表信息" name="schedule">
-        <student-schedule></student-schedule>
+        <student-schedule :schedule="studentInfo.schedule"></student-schedule>
       </el-tab-pane>
       <el-tab-pane label="自主选课" name="selectCourse">
         <student-select-course></student-select-course>
@@ -71,6 +71,8 @@
       let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
       api.getStudent((response) => {
         this.studentInfo = response;
+        console.log(response);
+        console.log(this.studentInfo.schedule);
       }, sessionData.user, sessionData.token); 
     },
     components: {

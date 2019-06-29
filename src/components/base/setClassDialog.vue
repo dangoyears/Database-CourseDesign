@@ -186,7 +186,7 @@
           {
             required: true,
             message: '输入不能为空',
-            trigger: ['blur', 'change']
+            trigger: ['blur']
           },
           {
             pattern: /[0-9]/,
@@ -208,6 +208,17 @@
         this.formattingAddress();
         this.formattingTime();
         this.computedSum();
+        console.log(typeof JSON.stringify(this.form.teachers), JSON.stringify(this.form.teachers));
+        // 确保所有数据都为string类型
+        for(let [key, val] of Object.entries(this.form)) {
+          if(key === 'class' || key === 'teachers')  {
+            this.form[key] = JSON.stringify(this.form.class);
+            console.log(key, typeof this.form[key]);
+            continue;
+          }
+          this.form[key] = val + "";
+          console.log(key, typeof this.form[key]);
+        }
         // 校验表单中的数据
         let res;
         this.$refs['form'].validate(valid => res = valid);
@@ -220,12 +231,11 @@
           return;
         }
         // 确保所有数据都为string类型
-        for(let [key, val] of Object.entries(this.form)) {
-          this.form[key] = val + "";
-        }
+        // for(let [key, val] of Object.entries(this.form)) {
+        //   console.log(typeof this.form[key]);
+        //   // this.form[key] = val + "";
+        // }
         api.uploadClassInfo(this.form, this.token, () => {
-          console.log("this.form");
-          console.log(this.form);
           // 通知父组件更新课程信息
           this.$emit('updateClassInfo');
           this.$emit('update:dialogVisible');
@@ -294,8 +304,6 @@
       // 将未格式化的tempClass格式化后存进form.class里，便于向后端传送参数
       classHandler(value) {
         this.form.class = [];
-        console.log("原来的vlaue");
-        console.log(value);
         value.forEach((val, index) => {
           this.form.class[index] = val[0] + "-" + val[1];
         })
