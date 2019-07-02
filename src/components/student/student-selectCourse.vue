@@ -24,7 +24,13 @@
 </template>
 
 <script>
+  import api from '../../api/index'
   export default {
+    created() {
+      api.getClassInfo((response) => {
+        console.log(response);
+      })
+    },
     data() {
       return {
         schedule: [

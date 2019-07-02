@@ -17,9 +17,7 @@
 <script>
   export default {
     created() {
-      // console.log(this.schedule);
       this.scheduleArr = this.schedule;
-
     },
     props: {
       schedule: {

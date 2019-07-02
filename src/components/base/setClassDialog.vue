@@ -20,8 +20,8 @@
             <el-select v-model="form.nature" placeholder="课程的性质">
               <el-option value="专业必修课"></el-option>
               <el-option value="专业选修课"></el-option>
-              <el-option value="通识课"></el-option>
-              <el-option value="实验课"></el-option>
+              <el-option value="通识性选修课"></el-option>
+              <el-option value="体育选修课"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -208,17 +208,16 @@
         this.formattingAddress();
         this.formattingTime();
         this.computedSum();
-        console.log(typeof JSON.stringify(this.form.teachers), JSON.stringify(this.form.teachers));
         // 确保所有数据都为string类型
         for(let [key, val] of Object.entries(this.form)) {
           if(key === 'class' || key === 'teachers')  {
-            this.form[key] = JSON.stringify(this.form.class);
-            console.log(key, typeof this.form[key]);
+            this.form[key] = JSON.stringify(this.form[key]);
+            this.form[key] = this.form[key].replace(/\"/g, "'");
             continue;
           }
           this.form[key] = val + "";
-          console.log(key, typeof this.form[key]);
         }
+        console.log(this.form);
         // 校验表单中的数据
         let res;
         this.$refs['form'].validate(valid => res = valid);
@@ -230,11 +229,6 @@
           });
           return;
         }
-        // 确保所有数据都为string类型
-        // for(let [key, val] of Object.entries(this.form)) {
-        //   console.log(typeof this.form[key]);
-        //   // this.form[key] = val + "";
-        // }
         api.uploadClassInfo(this.form, this.token, () => {
           // 通知父组件更新课程信息
           this.$emit('updateClassInfo');

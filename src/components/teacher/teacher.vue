@@ -1,12 +1,12 @@
 <template>
   <div class="container">
     <header class="teacher-header">
-        <label class="teacher-label">教师个人信息：</label>
-        <label class="teacher-name">{{teacherInfo.name}}</label>
-        <div  class="user-tab">
-          <span class="user-name">Hello, {{teacherInfo.name}}</span>
-          <img src="../../assets/switch1.png" alt="切换账号" @click="switchUser">
-        </div>
+      <label class="teacher-label">教师个人信息：</label>
+      <label class="teacher-name">{{teacherInfo.name}}</label>
+      <div  class="user-tab">
+        <span class="user-name">Hello, {{teacherInfo.name}}</span>
+        <img src="../../assets/switch1.png" alt="切换账号" @click="switchUser">
+      </div>
     </header>
     <table class="teacher-table">
       <tr>
@@ -42,10 +42,17 @@
       <div class="portrait"></div>
     </table>
     <img src="../../assets/add.png" class="addIcon" @click="createClassInfos">
-    <teacher-course></teacher-course>
+    <el-tabs v-model="activeTag" style="padding: 4px 10px">
+      <el-tab-pane label="课表信息" name="schedule">
+        <teacher-course></teacher-course>
+      </el-tab-pane>
+      <el-tab-pane label="登记成绩" name="setScore">
+      </el-tab-pane>
+    </el-tabs>
     <class-dialog 
       :dialogVisible="setClassInfoVisible"
       :collegeInfos="collegeInfos"
+      :token="token"
       v-on:update:dialogVisible="changeClassDialogVisible"
     ></class-dialog>
   </div>
@@ -60,9 +67,14 @@
     created() {
       // 将用户名和token存进sessionStorge里，刷新页面后仍能保持登陆状态
       let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
+      this.token = sessionData.token;
       api.getTeacher((response) => {
         this.teacherInfo = response;
-      }, sessionData.user, sessionData.token); 
+      }, sessionData.user, this.token); 
+      api.getCollegeInfo((response) => {
+        if(!response)  return;
+        this.collegeInfos = response.slice(0);
+      }, this.token);
     },
     components: {
       'class-dialog': classDialog,
@@ -72,7 +84,9 @@
       return {
         teacherInfo: {},
         setClassInfoVisible: false,
-        collegeInfos: []
+        collegeInfos: [],
+        token: '',
+        activeTag: 'schedule'
       }
     },
     methods: {

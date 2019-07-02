@@ -2,17 +2,18 @@
   <el-container>
     <el-main>
       <el-table :data="courseInfo">
-        <el-table-column prop="class" label="班级" width="300" show-overflow-tooltip sortable>
+        <el-table-column prop="class" label="班级" width="280" show-overflow-tooltip sortable>
           <template slot-scope="scope">
             <label>{{formattingClass(scope.row.class)}}</label>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="课程名称" width="170" show-overflow-tooltip sortable></el-table-column>
-        <el-table-column prop="credit" label="学分" width="110" sortable></el-table-column>
-        <el-table-column prop="nature" label="课程性质" width="150" sortable></el-table-column>
+        <el-table-column prop="name" label="课程名称" width="160" show-overflow-tooltip sortable></el-table-column>
+        <el-table-column prop="id" label="课程编号" width="130" sortable></el-table-column>
+        <el-table-column prop="credit" label="学分" width="80" sortable></el-table-column>
+        <el-table-column prop="nature" label="课程性质" width="120" sortable></el-table-column>
         <el-table-column prop="time" label="上课时间" width="170" sortable></el-table-column>
-        <el-table-column prop="address" label="上课地点" width="170" sortable></el-table-column>
-        <el-table-column prop="teachers" label="任课教师" width="180" show-overflow-tooltip sortable>
+        <el-table-column prop="address" label="上课地点" width="160" sortable></el-table-column>
+        <el-table-column prop="teachers" label="任课教师" width="140" show-overflow-tooltip sortable>
           <template slot-scope="scope">
             <label>{{formattingTeachers(scope.row.teachers)}}</label>
           </template>
@@ -96,6 +97,8 @@
       updateClassInfo() {
         api.getClassInfo((response) => {
           this.courseInfo = response;
+          console.log("courseInfo");
+          console.log(this.courseInfo);
         }, this.token);
       },
       // 格式化后端返回的班级信息，只显示出专业和班级

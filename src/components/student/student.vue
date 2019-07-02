@@ -62,7 +62,7 @@
 <script>
   import api from '../../api/index'
   import classDialog from '../base/setClassDialog'
-  import studentSchedule from './student-schedule '
+  import studentSchedule from './student-schedule'
   import studentSelectCourse from './student-selectCourse'
 
   export default {
@@ -72,7 +72,7 @@
       api.getStudent((response) => {
         this.studentInfo = response;
         console.log(response);
-        console.log(this.studentInfo.schedule);
+        // console.log(this.studentInfo.schedule);
       }, sessionData.user, sessionData.token); 
     },
     components: {

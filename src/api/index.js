@@ -93,6 +93,7 @@ export default {
   getClassInfo(callback, token) {
     axios.get(`https://dbcd.qfstudio.net/read/course?token=${token}`)
     .then(function(response) {
+      console.log(response);
       callback(response.data.data);
     })
     .catch(function(error) {
