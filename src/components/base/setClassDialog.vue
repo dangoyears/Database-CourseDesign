@@ -217,6 +217,7 @@
           }
           this.form[key] = val + "";
         }
+        console.log("要提交的form");
         console.log(this.form);
         // 校验表单中的数据
         let res;
@@ -302,9 +303,9 @@
           this.form.class[index] = val[0] + "-" + val[1];
         })
       },
-      // 任课教师从多名降到一名时把课程组长清空，避免还保留着先前的值
+      // 改变任课教师时，判断课程组长是否还再任课教师的行列，不在的话则清空课程组长
       teachersHandler(val) {
-        if(val.length < 2)  this.form.courseLeader = '';
+        if(!val.includes(this.form.courseLeader))  this.form.courseLeader = '';
       },
       // 计算选中班级的总人数
       computedSum() {

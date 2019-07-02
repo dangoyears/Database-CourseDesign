@@ -93,7 +93,6 @@ export default {
   getClassInfo(callback, token) {
     axios.get(`https://dbcd.qfstudio.net/read/course?token=${token}`)
     .then(function(response) {
-      console.log(response);
       callback(response.data.data);
     })
     .catch(function(error) {
@@ -131,6 +130,15 @@ export default {
   // 删除学生信息
   deleteStudent(id, type, token, callback) {
     axios.post('https://dbcd.qfstudio.net/delete/both', {id, type, token})
+    .then(function() {
+      callback();
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
+  deleteCourse(id, token, callback) {
+    axios.post(`https://dbcd.qfstudio.net/delete/course`, {id, token})
     .then(function() {
       callback();
     })

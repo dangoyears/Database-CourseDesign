@@ -2,7 +2,7 @@
   <el-container>
     <el-main>
       <el-table :data="courseInfo">
-        <el-table-column prop="class" label="班级" width="280" show-overflow-tooltip sortable>
+        <el-table-column prop="class" label="班级" width="250" show-overflow-tooltip sortable>
           <template slot-scope="scope">
             <label>{{formattingClass(scope.row.class)}}</label>
           </template>
@@ -13,7 +13,7 @@
         <el-table-column prop="nature" label="课程性质" width="120" sortable></el-table-column>
         <el-table-column prop="time" label="上课时间" width="170" sortable></el-table-column>
         <el-table-column prop="address" label="上课地点" width="160" sortable></el-table-column>
-        <el-table-column prop="teachers" label="任课教师" width="140" show-overflow-tooltip sortable>
+        <el-table-column prop="teachers" label="任课教师" width="120" show-overflow-tooltip sortable>
           <template slot-scope="scope">
             <label>{{formattingTeachers(scope.row.teachers)}}</label>
           </template>
@@ -74,8 +74,24 @@
         this.editClassInfo = JSON.parse(JSON.stringify(item));
         this.classInfoVisible = true;
       },
-      deleteCourseInfo() {
-
+      // 删除课程，并及时更新课程信息
+      deleteCourseInfo(item) {
+        this.$confirm(`是否确定要永久删除${item.name}课程?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+        .then(() => {
+          api.deleteCourse(item.id, this.token, () => {
+            this.updateClassInfo();
+          });
+          this.$message({
+            type: 'success',
+            message: '删除成功!',
+            duration: 1000
+          })
+        })
+        .catch(() => {});
       },
       // 将任课教师数组格式化成字符串
       formattingTeachers(arr) {
@@ -97,12 +113,11 @@
       updateClassInfo() {
         api.getClassInfo((response) => {
           this.courseInfo = response;
-          console.log("courseInfo");
-          console.log(this.courseInfo);
         }, this.token);
       },
       // 格式化后端返回的班级信息，只显示出专业和班级
       formattingClass(str) {
+        str = str.replace(/[\[\]\']/g, '');
         let arr = str.split(',');
         let res = "";
         arr.forEach((val, index) => {
