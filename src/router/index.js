@@ -21,17 +21,26 @@ export default new Router({
     {
       name: 'admin',
       path: '/admin',
-      component: admin
+      component: admin,
+      meta: {
+        auth: true
+      }
     },
     {
       name: 'teacher',
       path: '/teacher',
-      component: teacher
+      component: teacher,
+      meta: {
+        auth: true
+      }
     },
     {
       name: 'student',
       path: '/student',
-      component: student
+      component: student,
+      meta: {
+        auth: true
+      }
     }
   ]
 })

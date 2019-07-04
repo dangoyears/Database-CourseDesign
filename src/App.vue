@@ -7,7 +7,19 @@
 <script>
   export default {
     name: "app",
-    components: {}
+    components: {},
+    methods: {
+      // 防止直接输入url跳过用户登陆
+      checkLogin() {
+        let sessionData = sessionStorage.getItem("DBcourse-login");
+        if(!sessionData) {
+          this.$router.push('login');
+        }
+      }
+    },
+    created() {
+      this.checkLogin();
+    },
   };
 </script>
 
