@@ -72,7 +72,8 @@
           if(data) {
             let obj = {
               user: this.form.user,
-              token: data
+              token: data,
+              type: typeData
             }
             sessionStorage.setItem("DBcourse-login", JSON.stringify(obj));
             this.psdPrompt = "";

@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="schedule">
+  <el-table :data="filterSchedule">
     <el-table-column prop="name" label="课程名称" width="180" show-overflow-tooltip></el-table-column>
     <el-table-column prop="credit" label="学分" width="120" sortable></el-table-column>
     <el-table-column prop="nature" label="课程性质" width="150"></el-table-column>
@@ -31,13 +31,13 @@
       api.getClassInfo((response) => {
         if(response) {
           this.schedule = response.slice(0);
-          console.log(this.schedule);
         }
       }, token)
     },
     data() {
       return {
-        schedule: []
+        schedule: [],
+        // filterSchedule: []
       }
     },
     methods: {
@@ -48,6 +48,14 @@
           str += (index !== arr.length-1) ? `${val}, ` : val;
         })
         return str;
+      }
+    },
+    computed: {
+      filterSchedule() {
+        let arr = this.schedule.filter(val => {
+          if(val.class === "[]")  return true;
+        })
+        return arr;
       }
     }
   }

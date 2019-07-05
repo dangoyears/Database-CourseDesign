@@ -194,6 +194,7 @@
             trigger: ['blur', 'change']
           }
         ],
+        courseLeaderOption: []
       }
     },
     methods: {
@@ -305,10 +306,16 @@
       },
       // 改变任课教师时，判断课程组长是否还再任课教师的行列，不在的话则清空课程组长
       teachersHandler(val) {
-        if(!val.includes(this.form.courseLeader))  this.form.courseLeader = '';
+        if(!this.form.teachers.includes(this.form.courseLeader)) {
+          this.form.courseLeader = '';
+        } 
       },
       // 计算选中班级的总人数
       computedSum() {
+        if(!this.form.class) {
+          this.form.selectedSum = this.form.accommodate;
+          return;
+        }
         if(this.form.class.length === 0)  {
           this.form.selectedSum = this.form.accommodate;
           return;
@@ -365,7 +372,9 @@
         }
         else {
           this.tempClass = [];
-          this.form = {};
+          for(let key in Object.keys(this.form)) {
+            this.form[key] = (key === 'class' || key === 'teachers') ? [] : '';
+          }
         }
       }
     }

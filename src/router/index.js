@@ -8,6 +8,7 @@ const teacher = () => import('../components/teacher/teacher.vue')
 const student = () => import('../components/student/student.vue')
 
 export default new Router({
+  // mode: 'history',
   routes: [
     {
       path: '',

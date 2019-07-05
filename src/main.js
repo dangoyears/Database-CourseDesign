@@ -13,17 +13,3 @@ new Vue({
   render: h => h(App),
   router
 }).$mount('#app')
-// 导航守卫路由跳转时判断是否已登陆
-router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.auth)) {
-    let sessionData = sessionStorage.getItem("DBcourse-login");
-    if(!sessionData) {
-      next({
-        name: 'login'
-      });
-    }
-  }
-  else {
-    next();
-  }
-})
