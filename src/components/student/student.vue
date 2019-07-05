@@ -52,7 +52,7 @@
         <student-schedule></student-schedule>
       </el-tab-pane>
       <el-tab-pane label="自主选课" name="selectCourse">
-        <student-select-course></student-select-course>
+        <student-select-course :ownSchedule="studentInfo.schedule"></student-select-course>
       </el-tab-pane>
     </el-tabs>
   </div>
