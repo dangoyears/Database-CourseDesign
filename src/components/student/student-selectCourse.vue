@@ -17,7 +17,12 @@
     </el-table-column>
     <el-table-column>
       <template slot-scope="scope">
-        <el-button type="primary" size="small" plain @click="handlerCourse(scope.row)">{{scope.row.status}}</el-button>
+        <el-button 
+          :type="scope.row.status === '选课' ? 'primary' : 'danger'"
+          size="small"
+          plain
+          @click="handlerCourse(scope.row)"
+        >{{scope.row.status}}</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -58,22 +63,54 @@
         let len = this.schedule.length;
         //先给所有选修课增加一个status属性，表示该学生是否已经选择了该课，初始化为“选课”即没有选择该课。
         this.schedule.forEach((val, index) => {
-          this.schedule[index].status = '选课';
+          this.$set(this.schedule[index],'status','选课')
         })
         // 将该学生课表中的课对应到schedule中，把相应课程的status置为“退选”即该课程已选。
-        this.ownSchedule.forEach((val, index) => {
-          for(let i=0; i<len; i++) {
-            if(JSON.stringify(val) === JSON.stringify(this.schedule[i])) {
-              this.schedule[i][status] = '退选';
-              break;
+        setTimeout(() => {
+          this.ownSchedule.forEach((val, index) => {
+            for(let i=0; i<len; i++) {
+              // 根据课程编号判断两课程是否一致
+              if(val.id === this.schedule[i].id) {
+                this.schedule[i].status = '退选';
+                break;
+              }
             }
+          })
+        }, 0)
+      },
+      // 选课 or 退选后及时修改该课程的状态
+      changeCourseStatus(courseId, curStatus) {
+        for(let i=0, len=this.schedule.length; i<len; i++) {
+          if(this.schedule[i].id = courseId) {
+            console.log("要修改的id是");
+            console.log(courseId);
+            this.schedule[i].status = curStatus;
+            console.log(this.schedule[i].status);
+            console.log(this.schedule);
+            return;
           }
-        })
-        console.log(this.schedule);
+        }
       },
       // 选课 or 退选
       handlerCourse(item) {
-        console.log(item);
+        console.log("要进行操作的id是");
+        console.log(item.id);
+        let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
+        let {user, token} = sessionData;
+        if(item.status === '选课') {
+          console.log("xuan");
+          api.selectCourse(item.id, user, token, () => {
+            this.changeCourseStatus(item.id, '退选');
+            // console.log(item.status);
+          });
+        }
+        else {
+          console.log("tui");
+          api.cancelCourse(item.id, user, token, () => {
+            this.changeCourseStatus(item.id, '选课');
+            // console.log(item.status);
+          });
+        }
       }
     }
   }

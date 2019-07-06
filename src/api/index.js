@@ -34,10 +34,8 @@ export default {
   // 上传学生信息
   uploadStudentInfo(obj, token, callback) {
     obj = Object.assign(obj, {token: token});
-    console.log(obj);
     axios.post(`https://dbcd.qfstudio.net/write/student`, obj)
-    .then(function(response) {
-      console.log(response);
+    .then(function() {
       callback();
     })
     .catch(function(error) {
@@ -53,6 +51,16 @@ export default {
     .then(function(response) {
       console.log("response");
       console.log(response);
+      callback();
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
+  // 学生自主选课 
+  selectCourse(courseId, studentId, token, callback) {
+    axios.get(`https://dbcd.qfstudio.net/register/course?courseId=${courseId}&studentId=${studentId}&token=${token}`)
+    .then(function() {
       callback();
     })
     .catch(function(error) {
@@ -137,6 +145,7 @@ export default {
       alert(error);
     })
   },
+  // 删除课程信息
   deleteCourse(id, token, callback) {
     axios.post(`https://dbcd.qfstudio.net/delete/course`, {id, token})
     .then(function() {
@@ -145,5 +154,15 @@ export default {
     .catch(function(error) {
       alert(error);
     })
-  }
+  },
+  // 学生退选课程
+  cancelCourse(courseId, studentId, token, callback) {
+    axios.get(`https://dbcd.qfstudio.net/cancel/course?courseId=${courseId}&studentId=${studentId}&token=${token}`)
+    .then(function() {
+      callback();
+    })
+    .catch(function(error) {
+      alert(error);
+    })
+  },
 }
