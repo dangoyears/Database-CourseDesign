@@ -18,12 +18,7 @@
   import api from '../../api/index'
   export default {
     created() {
-      let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
-      api.getStudent((response) => {
-        if(response.schedule) {
-          this.scheduleArr = response.schedule.slice(0);
-        }
-      }, sessionData.user, sessionData.token); 
+      this.getSchedule();
     },
     data() {
       return {
@@ -31,6 +26,15 @@
       }
     },
     methods: {
+      // 获取课表信息
+      getSchedule() {
+        let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
+        api.getStudent((response) => {
+          if(response.schedule) {
+            this.scheduleArr = response.schedule.slice(0);
+          }
+        }, sessionData.user, sessionData.token); 
+      },
       // 将任课教师数组格式化成字符串
       formattingTeachers(arr) {
         let str = "";

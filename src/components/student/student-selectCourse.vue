@@ -12,7 +12,7 @@
     </el-table-column>
     <el-table-column label="容纳人数" width="150">
       <template slot-scope="scope">
-        <label>{{scope.row.selectedSum}} / {{scope.row.accommodate}}</label>
+        <label>{{scope.row.students.length}} / {{scope.row.accommodate}}</label>
       </template>
     </el-table-column>
     <el-table-column>
@@ -63,7 +63,8 @@
         let len = this.schedule.length;
         //先给所有选修课增加一个status属性，表示该学生是否已经选择了该课，初始化为“选课”即没有选择该课。
         this.schedule.forEach((val, index) => {
-          this.$set(this.schedule[index],'status','选课')
+          // 因为status是新增属性，要使视图动态响应的话需要使用this.$set方法，而不能直接赋值
+          this.$set(this.schedule[index], 'status', '选课')
         })
         // 将该学生课表中的课对应到schedule中，把相应课程的status置为“退选”即该课程已选。
         setTimeout(() => {
@@ -80,35 +81,41 @@
       },
       // 选课 or 退选后及时修改该课程的状态
       changeCourseStatus(courseId, curStatus) {
+        this.$emit('updateSchedule');
         for(let i=0, len=this.schedule.length; i<len; i++) {
-          if(this.schedule[i].id = courseId) {
-            console.log("要修改的id是");
-            console.log(courseId);
+          if(this.schedule[i].id === courseId) {
             this.schedule[i].status = curStatus;
-            console.log(this.schedule[i].status);
-            console.log(this.schedule);
+            // 表面修改课程容量，省去重新发起api的消耗
+            if(curStatus === "选课") {
+              this.schedule[i].students.pop();
+            }
+            else {
+              this.schedule[i].students.push({});
+            }
             return;
           }
         }
       },
       // 选课 or 退选
       handlerCourse(item) {
-        console.log("要进行操作的id是");
-        console.log(item.id);
         let sessionData = JSON.parse(sessionStorage.getItem("DBcourse-login"));
         let {user, token} = sessionData;
         if(item.status === '选课') {
-          console.log("xuan");
+          if(item.students.length >= (+item.accommodate)) {
+            this.$notify.error({
+              title: '选课失败',
+              message: '课程容量已达上限。',
+              duration: 1000
+            });
+            return;
+          }
           api.selectCourse(item.id, user, token, () => {
             this.changeCourseStatus(item.id, '退选');
-            // console.log(item.status);
           });
         }
         else {
-          console.log("tui");
           api.cancelCourse(item.id, user, token, () => {
             this.changeCourseStatus(item.id, '选课');
-            // console.log(item.status);
           });
         }
       }

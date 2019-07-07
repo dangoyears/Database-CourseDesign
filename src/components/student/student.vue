@@ -49,10 +49,13 @@
     </table>
     <el-tabs v-model="activeTag" style="padding: 4px 10px">
       <el-tab-pane label="课表信息" name="schedule">
-        <student-schedule></student-schedule>
+        <student-schedule ref="child_schedule"></student-schedule>
       </el-tab-pane>
       <el-tab-pane label="自主选课" name="selectCourse">
-        <student-select-course :ownSchedule="studentInfo.schedule"></student-select-course>
+        <student-select-course 
+          :ownSchedule="studentInfo.schedule"
+          @updateSchedule="updateSchedule"
+        ></student-select-course>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -94,6 +97,10 @@
           this.$router.push({name: 'login'})
         }).catch(() => {})
       },
+      // 监听子组件选课/退选，及时更新课表
+      updateSchedule() {
+        this.$refs.child_schedule.getSchedule();
+      }
     }
   }
 </script>
