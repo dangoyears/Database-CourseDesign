@@ -10,7 +10,7 @@
         <label>{{formattingTeachers(scope.row.teachers)}}</label>
       </template>
     </el-table-column>
-    <el-table-column prop="score" label="分数" sortable></el-table-column>
+    <el-table-column prop="score" label="分数"></el-table-column>
   </el-table>
 </template>
 

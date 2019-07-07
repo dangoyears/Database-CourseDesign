@@ -1,7 +1,7 @@
 <template>
   <el-table :data="schedule">
     <el-table-column prop="name" label="课程名称" width="180" show-overflow-tooltip></el-table-column>
-    <el-table-column prop="credit" label="学分" width="120" sortable></el-table-column>
+    <el-table-column prop="credit" label="学分" width="120"></el-table-column>
     <el-table-column prop="nature" label="课程性质" width="150"></el-table-column>
     <el-table-column prop="time" label="上课时间" width="150"></el-table-column>
     <el-table-column prop="address" label="上课地点" width="150"></el-table-column>

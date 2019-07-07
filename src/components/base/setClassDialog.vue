@@ -218,8 +218,6 @@
           }
           this.form[key] = val + "";
         }
-        console.log("要提交的form");
-        console.log(this.form);
         // 校验表单中的数据
         let res;
         this.$refs['form'].validate(valid => res = valid);

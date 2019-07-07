@@ -45,12 +45,8 @@ export default {
   // 上传课程信息
   uploadClassInfo(obj, token, callback) {
     obj.token = token;
-    console.log("上传的form信息");
-    console.log(obj);
     axios.post(`https://dbcd.qfstudio.net/write/course`, obj)
-    .then(function(response) {
-      console.log("response");
-      console.log(response);
+    .then(function() {
       callback();
     })
     .catch(function(error) {

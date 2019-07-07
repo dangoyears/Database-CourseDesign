@@ -8,7 +8,7 @@
     <el-table-column prop="courseLeader" label="任课组长" width="150"></el-table-column>
     <el-table-column label="课程容量">
       <template slot-scope="scope">
-        <label>{{scope.row.selectedSum}} / {{scope.row.accommodate}}</label>
+        <label>{{scope.row.students.length}} / {{scope.row.accommodate}}</label>
       </template>
     </el-table-column>
   </el-table>

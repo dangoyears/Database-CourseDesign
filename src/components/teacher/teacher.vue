@@ -46,7 +46,8 @@
       <el-tab-pane label="课表信息" name="schedule">
         <teacher-course></teacher-course>
       </el-tab-pane>
-      <el-tab-pane label="登记成绩" name="setScore">
+      <el-tab-pane label="登记成绩" name="setScores">
+        <teacher-set-scores></teacher-set-scores>
       </el-tab-pane>
     </el-tabs>
     <class-dialog 
@@ -62,6 +63,7 @@
   import api from '../../api/index'
   import classDialog from '../base/setClassDialog'
   import teacherCourse from './teacher-course'
+  import teacherSetScores from './teacher-setScores'
 
   export default {
     created() {
@@ -78,7 +80,8 @@
     },
     components: {
       'class-dialog': classDialog,
-      'teacher-course': teacherCourse
+      'teacher-course': teacherCourse,
+      'teacher-set-scores': teacherSetScores
     },
     data() {
       return {
@@ -86,7 +89,7 @@
         setClassInfoVisible: false,
         collegeInfos: [],
         token: '',
-        activeTag: 'schedule'
+        activeTag: 'setScores'
       }
     },
     methods: {
@@ -105,8 +108,6 @@
       changeClassDialogVisible() {
         this.setClassInfoVisible = false;
       }
-    },
-    computed: {
     }
   }
 </script>
